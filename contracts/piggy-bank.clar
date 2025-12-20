@@ -33,31 +33,34 @@
         ;; Verify amount is greater than 0
         (asserts! (> amount u0) ERR-INVALID-AMOUNT)
         
-        ;; Check if lock already exists
-        (let ((existing-lock (map-get? lock-info { owner: tx-sender })))
-            (if existing-lock
-                ;; If lock exists, verify it's STX
-                (asserts! (is-eq (get token (unwrap-panic existing-lock)) STX-MARKER) ERR-INVALID-TOKEN)
-                ;; If no lock exists, create one
-                (map-set lock-info { owner: tx-sender } {
-                    lock-duration: u0,
-                    lock-start: block-height,
-                    token: STX-MARKER
-                })
-            )
-        )
-        
-        ;; Transfer STX from sender to this contract
-        (match (as-contract (stx-transfer? amount tx-sender (as-contract tx-sender)))
-            (ok true)
-                (begin
-                    ;; Update balance (use STX-MARKER as token identifier for STX)
-                    (let ((current-balance (default-to u0 (map-get? balances { token: STX-MARKER, owner: tx-sender }))))
-                        (map-set balances { token: STX-MARKER, owner: tx-sender } (+ current-balance amount))
-                    )
-                    (ok true)
+        ;; Get contract principal to use as STX marker
+        (let ((stx-marker (get-contract-principal)))
+            ;; Check if lock already exists
+            (let ((existing-lock (map-get? lock-info { owner: tx-sender })))
+                (if existing-lock
+                    ;; If lock exists, verify it's STX
+                    (asserts! (is-eq (get token (unwrap-panic existing-lock)) stx-marker) ERR-INVALID-TOKEN)
+                    ;; If no lock exists, create one
+                    (map-set lock-info { owner: tx-sender } {
+                        lock-duration: u0,
+                        lock-start: block-height,
+                        token: stx-marker
+                    })
                 )
-            (err e) (err ERR-TRANSFER-FAILED)
+            )
+            
+            ;; Transfer STX from sender to this contract
+            (match (as-contract (stx-transfer? amount tx-sender (as-contract tx-sender)))
+                (ok true)
+                    (begin
+                        ;; Update balance (use contract principal as token identifier for STX)
+                        (let ((current-balance (default-to u0 (map-get? balances { token: stx-marker, owner: tx-sender }))))
+                            (map-set balances { token: stx-marker, owner: tx-sender } (+ current-balance amount))
+                        )
+                        (ok true)
+                    )
+                (err e) (err ERR-TRANSFER-FAILED)
+            )
         )
     )
 )
@@ -155,16 +158,18 @@
                     (map-set balances { token: token, owner: tx-sender } (- current-balance amount))
                     
                     ;; Transfer tokens back to user (handle STX vs fungible tokens)
-                    (if (is-eq token STX-MARKER)
-                        ;; STX transfer
-                        (match (as-contract (stx-transfer? withdraw-amount (as-contract tx-sender) tx-sender))
-                            (ok true) (ok withdraw-amount)
-                            (err e) (err ERR-TRANSFER-FAILED)
-                        )
-                        ;; Fungible token transfer
-                        (match (as-contract (contract-call? token transfer withdraw-amount (as-contract tx-sender) tx-sender))
-                            (ok true) (ok withdraw-amount)
-                            (err e) (err ERR-TRANSFER-FAILED)
+                    (let ((stx-marker (get-contract-principal)))
+                        (if (is-eq token stx-marker)
+                            ;; STX transfer
+                            (match (as-contract (stx-transfer? withdraw-amount (as-contract tx-sender) tx-sender))
+                                (ok true) (ok withdraw-amount)
+                                (err e) (err ERR-TRANSFER-FAILED)
+                            )
+                            ;; Fungible token transfer
+                            (match (as-contract (contract-call? token transfer withdraw-amount (as-contract tx-sender) tx-sender))
+                                (ok true) (ok withdraw-amount)
+                                (err e) (err ERR-TRANSFER-FAILED)
+                            )
                         )
                     )
                 )

@@ -9,6 +9,26 @@ requirements = []
 path = 'contracts/sysnc.clar'
 clarity_version = 4
 epoch = 'latest'
+
+[contracts.piggy-bank]
+path = 'contracts/piggy-bank.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.piggy-bank-factory]
+path = 'contracts/piggy-bank-factory.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.token-manager]
+path = 'contracts/token-manager.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.piggy-bank-registry]
+path = 'contracts/piggy-bank-registry.clar'
+clarity_version = 4
+epoch = 'latest'
 [repl.analysis]
 passes = [
     'call_checker',
