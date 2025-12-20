@@ -8,7 +8,7 @@
 (define-constant ERR-NOT-REGISTERED (err u2003))
 
 ;; Data maps
-(define-map user-piggy-banks { user: principal } (list 10 principal))
+(define-map user-piggy-banks { user: principal } (list 20 principal))
 (define-map piggy-bank-owners { piggy-bank: principal } principal)
 (define-data-var total-piggy-banks uint u0)
 
