@@ -36,9 +36,7 @@
         
         ;; Add to owner's list
         (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))
-            (let ((new-list (append owner-list (list piggy-bank))))
-                (map-set owner-piggy-banks { owner: owner } new-list)
-            )
+            (map-set owner-piggy-banks { owner: owner } (append owner-list (list piggy-bank)))
         )
         
         ;; Add to global registry

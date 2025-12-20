@@ -24,12 +24,7 @@
         
         ;; Register the piggy bank
         (let ((existing-list (default-to (list) (map-get? user-piggy-banks { user: tx-sender }))))
-            (let ((new-list (append existing-list (list piggy-bank))))
-                (if (is-ok new-list)
-                    (map-set user-piggy-banks { user: tx-sender } (unwrap-panic new-list))
-                    (map-set user-piggy-banks { user: tx-sender } (list piggy-bank))
-                )
-            )
+            (map-set user-piggy-banks { user: tx-sender } (append existing-list (list piggy-bank)))
         )
         (map-set piggy-bank-owners { piggy-bank: piggy-bank } tx-sender)
         (var-set total-piggy-banks (+ (var-get total-piggy-banks) u1))
