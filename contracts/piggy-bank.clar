@@ -15,19 +15,6 @@
 ;; Data vars
 (define-data-var contract-principal (optional principal) none)
 
-;; Initialize contract principal (called once)
-(define-private (init-contract-principal)
-    (if (is-none (var-get contract-principal))
-        (var-set contract-principal (some (as-contract tx-sender)))
-        true
-    )
-)
-
-;; Get contract principal (used as STX marker)
-(define-private (get-stx-marker)
-    (unwrap-panic (var-get contract-principal))
-)
-
 ;; Data maps
 (define-map balances { token: principal, owner: principal } uint)
 (define-map lock-info { owner: principal } { 
@@ -41,14 +28,17 @@
 ;; Deposit STX into the piggy bank
 (define-public (deposit-stx (amount uint))
     (begin
-        ;; Initialize contract principal if needed
-        (init-contract-principal)
+        ;; Initialize contract principal if needed (get it in contract context)
+        (if (is-none (var-get contract-principal))
+            (var-set contract-principal (some (as-contract tx-sender)))
+            true
+        )
         
         ;; Verify amount is greater than 0
         (asserts! (> amount u0) ERR-INVALID-AMOUNT)
         
         ;; Get STX marker
-        (let ((stx-marker (get-stx-marker)))
+        (let ((stx-marker (unwrap-panic (var-get contract-principal))))
             ;; Check if lock already exists
             (let ((existing-lock (map-get? lock-info { owner: tx-sender })))
                 (if existing-lock
@@ -172,7 +162,7 @@
                     (map-set balances { token: token, owner: tx-sender } (- current-balance amount))
                     
                     ;; Transfer tokens back to user (handle STX vs fungible tokens)
-                    (let ((stx-marker (get-stx-marker)))
+                    (let ((stx-marker (unwrap-panic (var-get contract-principal))))
                         (if (is-eq token stx-marker)
                             ;; STX transfer
                             (match (as-contract (stx-transfer? withdraw-amount (as-contract tx-sender) tx-sender))
