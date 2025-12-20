@@ -7,8 +7,9 @@
 (define-constant ERR-ALREADY-REGISTERED (err u2002))
 (define-constant ERR-NOT-REGISTERED (err u2003))
 
-;; Data maps
-(define-map user-piggy-banks { user: principal } (list 20 principal))
+;; Data maps  
+(define-map user-piggy-bank-count { user: principal } uint)
+(define-map user-piggy-bank { user: principal, index: uint } principal)
 (define-map piggy-bank-owners { piggy-bank: principal } principal)
 (define-data-var total-piggy-banks uint u0)
 
@@ -23,8 +24,9 @@
         )
         
         ;; Register the piggy bank
-        (let ((existing-list (default-to (list) (map-get? user-piggy-banks { user: tx-sender }))))
-            (map-set user-piggy-banks { user: tx-sender } (append existing-list (list piggy-bank)))
+        (let ((count (default-to u0 (map-get? user-piggy-bank-count { user: tx-sender }))))
+            (map-set user-piggy-bank { user: tx-sender, index: count } piggy-bank)
+            (map-set user-piggy-bank-count { user: tx-sender } (+ count u1))
         )
         (map-set piggy-bank-owners { piggy-bank: piggy-bank } tx-sender)
         (var-set total-piggy-banks (+ (var-get total-piggy-banks) u1))
@@ -45,9 +47,14 @@
 
 ;; Read-only functions
 
-;; Get all piggy banks for a user
-(define-read-only (get-user-piggy-banks (user principal))
-    (ok (default-to (list) (map-get? user-piggy-banks { user: user })))
+;; Get all piggy banks for a user (returns count, use get-user-piggy-bank-by-index to get individual)
+(define-read-only (get-user-piggy-bank-count (user principal))
+    (ok (default-to u0 (map-get? user-piggy-bank-count { user: user })))
+)
+
+;; Get a specific piggy bank by index
+(define-read-only (get-user-piggy-bank-by-index (user principal) (index uint))
+    (ok (map-get? user-piggy-bank { user: user, index: index }))
 )
 
 ;; Get the owner of a piggy bank
