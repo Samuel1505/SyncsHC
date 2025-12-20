@@ -7,8 +7,6 @@
 (define-constant ERR-TOKEN-EXISTS (err u3002))
 (define-constant ERR-TOKEN-NOT-FOUND (err u3003))
 
-(define-constant CONTRACT-OWNER (as-contract tx-sender))
-
 ;; Data vars
 (define-data-var owner principal tx-sender)
 
