@@ -12,11 +12,6 @@
 
 (define-constant PENALTY-RATE u50) ;; 5% penalty (50 basis points = 5%)
 
-;; Helper function to get contract principal (used as STX marker)
-(define-private (get-contract-principal)
-    (as-contract tx-sender)
-)
-
 ;; Data maps
 (define-map balances { token: principal, owner: principal } uint)
 (define-map lock-info { owner: principal } { 
@@ -33,8 +28,8 @@
         ;; Verify amount is greater than 0
         (asserts! (> amount u0) ERR-INVALID-AMOUNT)
         
-        ;; Get contract principal to use as STX marker
-        (let ((stx-marker (get-contract-principal)))
+        ;; Get contract principal to use as STX marker (use as-contract inline)
+        (let ((stx-marker (as-contract tx-sender)))
             ;; Check if lock already exists
             (let ((existing-lock (map-get? lock-info { owner: tx-sender })))
                 (if existing-lock
@@ -158,7 +153,7 @@
                     (map-set balances { token: token, owner: tx-sender } (- current-balance amount))
                     
                     ;; Transfer tokens back to user (handle STX vs fungible tokens)
-                    (let ((stx-marker (get-contract-principal)))
+                    (let ((stx-marker (as-contract tx-sender)))
                         (if (is-eq token stx-marker)
                             ;; STX transfer
                             (match (as-contract (stx-transfer? withdraw-amount (as-contract tx-sender) tx-sender))
