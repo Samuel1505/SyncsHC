@@ -28,13 +28,11 @@
         )
         
         ;; Register metadata
-        (let ((current-height block-height))
-            (map-set piggy-bank-metadata { piggy-bank: piggy-bank } {
-                owner: owner,
-                created-at: current-height,
-                factory: factory
-            })
-        )
+        (map-set piggy-bank-metadata { piggy-bank: piggy-bank } {
+            owner: owner,
+            created-at: block-height,
+            factory: factory
+        })
         
         ;; Add to owner's list
         (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))

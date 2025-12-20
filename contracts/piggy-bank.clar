@@ -29,9 +29,11 @@
 (define-public (deposit-stx (amount uint))
     (begin
         ;; Initialize contract principal if needed (get it in contract context)
-        (if (is-none (var-get contract-principal))
-            (var-set contract-principal (some (as-contract tx-sender)))
-            true
+        (let ((contract-addr (as-contract tx-sender)))
+            (if (is-none (var-get contract-principal))
+                (var-set contract-principal (some contract-addr))
+                true
+            )
         )
         
         ;; Verify amount is greater than 0
