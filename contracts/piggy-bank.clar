@@ -3,6 +3,26 @@
 ;; summary: Individual savings account with lock duration and penalty fees
 ;; description: Allows users to deposit supported tokens and withdraw after lock period. Early withdrawals incur a penalty fee.
 
+;; SIP-010 Fungible Token Trait
+(define-trait sip010-token
+    (
+        ;; Transfer from the origin to a new principal
+        (transfer (uint principal principal) (response bool uint))
+        ;; Get the token name
+        (get-name () (response (string-ascii 32) uint))
+        ;; Get the token symbol
+        (get-symbol () (response (string-ascii 32) uint))
+        ;; Get the number of decimals used
+        (get-decimals () (response uint uint))
+        ;; Get the balance of a principal
+        (get-balance (principal) (response uint uint))
+        ;; Get the total supply
+        (get-total-supply () (response uint uint))
+        ;; Get the token URI
+        (get-token-uri () (response (optional (string-ascii 256)) uint))
+    )
+)
+
 (define-constant ERR-UNAUTHORIZED (err u1001))
 (define-constant ERR-INVALID-AMOUNT (err u1002))
 (define-constant ERR-LOCK-NOT-EXPIRED (err u1003))
@@ -72,8 +92,9 @@
 )
 
 ;; Deposit fungible tokens into the piggy bank
-(define-public (deposit-token (amount uint) (token principal))
-    (let ((sender tx-sender))
+(define-public (deposit-token (amount uint) (token <sip010-token>))
+    (let ((sender tx-sender)
+          (token-principal (contract-of token)))
         (begin
             ;; Verify amount is greater than 0
             (asserts! (> amount u0) ERR-INVALID-AMOUNT)
@@ -82,30 +103,29 @@
             (let ((existing-lock (map-get? lock-info { owner: sender })))
                 (if (is-some existing-lock)
                     ;; If lock exists, verify it's the same token
-                    (asserts! (is-eq (get token (unwrap-panic existing-lock)) token) ERR-INVALID-TOKEN)
+                    (asserts! (is-eq (get token (unwrap-panic existing-lock)) token-principal) ERR-INVALID-TOKEN)
                     ;; If no lock exists, create one
                     (let ((current-block u0)) ;; TODO: Replace with block-height when available in Clarity 4
                         (map-set lock-info { owner: sender } {
                             lock-duration: u0,
                             lock-start: current-block,
-                            token: token
+                            token: token-principal
                         })
                     )
                 )
             )
             
             ;; Transfer tokens from sender to this contract
-            ;; Note: For fungible tokens, the user must approve this contract first
             (match (contract-call? token transfer amount sender tx-sender)
-                (ok true)
+                success
                     (begin
                         ;; Update balance
-                        (let ((current-balance (default-to u0 (map-get? balances { token: token, owner: sender }))))
-                            (map-set balances { token: token, owner: sender } (+ current-balance amount))
+                        (let ((current-balance (default-to u0 (map-get? balances { token: token-principal, owner: sender }))))
+                            (map-set balances { token: token-principal, owner: sender } (+ current-balance amount))
                         )
                         (ok true)
                     )
-                (err e) (err ERR-TRANSFER-FAILED)
+                error ERR-TRANSFER-FAILED
             )
         )
     )
@@ -114,21 +134,23 @@
 ;; Set lock duration (can only be set once, before first deposit)
 (define-public (set-lock-duration (duration uint))
     (let ((lock (map-get? lock-info { owner: tx-sender })))
-        (if lock
-            (let ((balance (default-to u0 (map-get? balances { 
-                token: (get token (unwrap-panic lock)), 
-                owner: tx-sender 
-            }))))
-                ;; Can only set lock duration if no balance exists
-                (asserts! (is-eq balance u0) ERR-UNAUTHORIZED)
-                (map-set lock-info { owner: tx-sender } {
-                    lock-duration: duration,
-                    lock-start: (get lock-start (unwrap-panic lock)),
-                    token: (get token (unwrap-panic lock))
-                })
-                (ok true)
+        (if (is-some lock)
+            (let ((lock-data (unwrap-panic lock)))
+                (let ((balance (default-to u0 (map-get? balances { 
+                    token: (get token lock-data), 
+                    owner: tx-sender 
+                }))))
+                    ;; Can only set lock duration if no balance exists
+                    (asserts! (is-eq balance u0) ERR-UNAUTHORIZED)
+                    (map-set lock-info { owner: tx-sender } {
+                        lock-duration: duration,
+                        lock-start: (get lock-start lock-data),
+                        token: (get token lock-data)
+                    })
+                    (ok true)
+                )
             )
-            (err ERR-UNAUTHORIZED)
+            ERR-UNAUTHORIZED
         )
     )
 )
@@ -152,7 +174,7 @@
             (asserts! (<= amount current-balance) ERR-NO-BALANCE)
             
             ;; Calculate if lock period has expired
-            (let ((current-height block-height)
+            (let ((current-height stacks-block-height)
                   (elapsed (- current-height lock-start))
                   (is-locked (< elapsed lock-duration)))
                 
@@ -193,11 +215,11 @@
 ;; Check if lock period has expired
 (define-read-only (is-lock-expired (owner principal))
     (let ((lock (map-get? lock-info { owner: owner })))
-        (if lock
+        (if (is-some lock)
             (let ((lock-data (unwrap-panic lock))
                   (lock-start (get lock-start lock-data))
                   (lock-duration (get lock-duration lock-data))
-                  (elapsed (- block-height lock-start)))
+                  (elapsed (- stacks-block-height lock-start)))
                 (ok (>= elapsed lock-duration))
             )
             (ok false)
@@ -208,11 +230,11 @@
 ;; Get remaining lock blocks
 (define-read-only (get-remaining-lock-blocks (owner principal))
     (let ((lock (map-get? lock-info { owner: owner })))
-        (if lock
+        (if (is-some lock)
             (let ((lock-data (unwrap-panic lock))
                   (lock-start (get lock-start lock-data))
                   (lock-duration (get lock-duration lock-data))
-                  (elapsed (- block-height lock-start)))
+                  (elapsed (- stacks-block-height lock-start)))
                 (if (>= elapsed lock-duration)
                     (ok u0)
                     (ok (- lock-duration elapsed))
@@ -222,4 +244,3 @@
         )
     )
 )
-

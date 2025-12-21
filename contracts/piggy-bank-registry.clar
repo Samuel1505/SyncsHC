@@ -6,6 +6,7 @@
 (define-constant ERR-UNAUTHORIZED (err u4001))
 (define-constant ERR-ALREADY-REGISTERED (err u4002))
 (define-constant ERR-NOT-REGISTERED (err u4003))
+(define-constant ERR-LIST-FULL (err u4004))
 
 ;; Data maps
 (define-map piggy-bank-metadata { piggy-bank: principal } {
@@ -16,6 +17,11 @@
 (define-map owner-piggy-banks { owner: principal } (list 10 principal))
 (define-map all-piggy-banks uint principal) ;; Index-based map for enumeration
 (define-data-var total-piggy-banks uint u0)
+
+;; Helper function to add piggy bank to list
+(define-private (add-to-list (piggy-bank principal) (existing-list (list 10 principal)))
+    (unwrap-panic (as-max-len? (append existing-list (list piggy-bank)) u10))
+)
 
 ;; Public functions
 
@@ -37,7 +43,7 @@
         
             ;; Add to owner's list
             (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))
-                (map-set owner-piggy-banks { owner: owner } (append owner-list (list piggy-bank)))
+                (map-set owner-piggy-banks { owner: owner } (add-to-list piggy-bank owner-list))
             )
         
             ;; Add to global registry
@@ -84,4 +90,3 @@
 (define-read-only (get-piggy-bank-by-index (index uint))
     (ok (map-get? all-piggy-banks index))
 )
-
