@@ -6,6 +6,7 @@
 (define-constant ERR-UNAUTHORIZED (err u4001))
 (define-constant ERR-ALREADY-REGISTERED (err u4002))
 (define-constant ERR-NOT-REGISTERED (err u4003))
+(define-constant ERR-LIST-FULL (err u4004))
 
 ;; Data maps
 (define-map piggy-bank-metadata { piggy-bank: principal } {
@@ -37,7 +38,9 @@
         
             ;; Add to owner's list
             (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))
-                (map-set owner-piggy-banks { owner: owner } (append owner-list (list piggy-bank)))
+                (let ((new-list (unwrap! (as-max-len? (append owner-list (list piggy-bank)) u10) ERR-LIST-FULL)))
+                    (map-set owner-piggy-banks { owner: owner } new-list)
+                )
             )
         
             ;; Add to global registry
@@ -84,4 +87,3 @@
 (define-read-only (get-piggy-bank-by-index (index uint))
     (ok (map-get? all-piggy-banks index))
 )
-
