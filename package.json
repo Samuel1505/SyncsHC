@@ -7,7 +7,9 @@
   "scripts": {
     "test": "vitest run",
     "test:report": "vitest run -- --coverage --costs",
-    "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\""
+    "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\"",
+    "chainhooks:setup": "tsx chainhooks/setup.ts",
+    "chainhooks:list": "tsx -e \"import { chainhooks } from './chainhooks/index.js'; chainhooks.listChainhooks().then(hooks => console.log(JSON.stringify(hooks, null, 2)));\""
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +21,8 @@
     "chokidar-cli": "^3.0.0",
     "vitest": "^4.0.7",
     "vitest-environment-clarinet": "^3.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
   }
 }
