@@ -174,7 +174,7 @@
             (asserts! (<= amount current-balance) ERR-NO-BALANCE)
             
             ;; Calculate if lock period has expired
-            (let ((current-height block-height)
+            (let ((current-height stacks-block-height)
                   (elapsed (- current-height lock-start))
                   (is-locked (< elapsed lock-duration)))
                 
@@ -219,7 +219,7 @@
             (let ((lock-data (unwrap-panic lock))
                   (lock-start (get lock-start lock-data))
                   (lock-duration (get lock-duration lock-data))
-                  (elapsed (- block-height lock-start)))
+                  (elapsed (- stacks-block-height lock-start)))
                 (ok (>= elapsed lock-duration))
             )
             (ok false)
@@ -234,7 +234,7 @@
             (let ((lock-data (unwrap-panic lock))
                   (lock-start (get lock-start lock-data))
                   (lock-duration (get lock-duration lock-data))
-                  (elapsed (- block-height lock-start)))
+                  (elapsed (- stacks-block-height lock-start)))
                 (if (>= elapsed lock-duration)
                     (ok u0)
                     (ok (- lock-duration elapsed))
