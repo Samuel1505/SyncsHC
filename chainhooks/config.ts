@@ -26,6 +26,14 @@ export const getChainhookConfig = (): ChainhookEnvironment => {
 };
 
 /**
+ * Convert network to chainhook-compatible network
+ * Devnet is not supported by chainhooks API, so it maps to testnet
+ */
+export const toChainhookNetwork = (network: "mainnet" | "testnet" | "devnet"): "mainnet" | "testnet" => {
+  return network === "devnet" ? "testnet" : network;
+};
+
+/**
  * Contract addresses configuration
  * Update these with your deployed contract addresses
  */
