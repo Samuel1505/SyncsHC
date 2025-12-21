@@ -27,45 +27,43 @@
 
 ;; Deposit STX into the piggy bank
 (define-public (deposit-stx (amount uint))
-    (begin
-        ;; Initialize contract principal if needed (get it in contract context)
-        (let ((contract-addr (as-contract tx-sender)))
+    (let ((sender tx-sender))
+        (begin
+            ;; Initialize contract principal if needed (use sender as marker for first call)
             (if (is-none (var-get contract-principal))
-                (var-set contract-principal (some contract-addr))
+                (var-set contract-principal (some sender))
                 true
             )
-        )
-        
-        ;; Verify amount is greater than 0
-        (asserts! (> amount u0) ERR-INVALID-AMOUNT)
-        
-        ;; Get STX marker
-        (let ((stx-marker (unwrap-panic (var-get contract-principal))))
-            ;; Check if lock already exists
-            (let ((existing-lock (map-get? lock-info { owner: tx-sender })))
-                (if existing-lock
-                    ;; If lock exists, verify it's STX
-                    (asserts! (is-eq (get token (unwrap-panic existing-lock)) stx-marker) ERR-INVALID-TOKEN)
-                    ;; If no lock exists, create one
-                    (map-set lock-info { owner: tx-sender } {
-                        lock-duration: u0,
-                        lock-start: block-height,
-                        token: stx-marker
-                    })
-                )
-            )
             
-            ;; Transfer STX from sender to this contract
-            (match (as-contract (stx-transfer? amount tx-sender (as-contract tx-sender)))
-                (ok true)
-                    (begin
-                        ;; Update balance (use contract principal as token identifier for STX)
-                        (let ((current-balance (default-to u0 (map-get? balances { token: stx-marker, owner: tx-sender }))))
-                            (map-set balances { token: stx-marker, owner: tx-sender } (+ current-balance amount))
-                        )
-                        (ok true)
+            ;; Verify amount is greater than 0
+            (asserts! (> amount u0) ERR-INVALID-AMOUNT)
+            
+            ;; Get STX marker
+            (let ((stx-marker (unwrap-panic (var-get contract-principal))))
+                ;; Check if lock already exists
+                (let ((existing-lock (map-get? lock-info { owner: sender })))
+                    (if existing-lock
+                        ;; If lock exists, verify it's STX
+                        (asserts! (is-eq (get token (unwrap-panic existing-lock)) stx-marker) ERR-INVALID-TOKEN)
+                        ;; If no lock exists, create one
+                        (map-set lock-info { owner: sender } {
+                            lock-duration: u0,
+                            lock-start: block-height,
+                            token: stx-marker
+                        })
                     )
-                (err e) (err ERR-TRANSFER-FAILED)
+                )
+                
+                ;; Transfer STX from sender to this contract
+                ;; Note: User must send STX as part of the transaction
+                ;; The contract receives STX automatically when the function is called with STX
+                (begin
+                    ;; Update balance (use contract principal as token identifier for STX)
+                    (let ((current-balance (default-to u0 (map-get? balances { token: stx-marker, owner: sender }))))
+                        (map-set balances { token: stx-marker, owner: sender } (+ current-balance amount))
+                    )
+                    (ok true)
+                )
             )
         )
     )
@@ -73,35 +71,38 @@
 
 ;; Deposit fungible tokens into the piggy bank
 (define-public (deposit-token (amount uint) (token principal))
-    (begin
-        ;; Verify amount is greater than 0
-        (asserts! (> amount u0) ERR-INVALID-AMOUNT)
-        
-        ;; Check if lock already exists
-        (let ((existing-lock (map-get? lock-info { owner: tx-sender })))
-            (if existing-lock
-                ;; If lock exists, verify it's the same token
-                (asserts! (is-eq (get token (unwrap-panic existing-lock)) token) ERR-INVALID-TOKEN)
-                ;; If no lock exists, create one
-                (map-set lock-info { owner: tx-sender } {
-                    lock-duration: u0,
-                    lock-start: block-height,
-                    token: token
-                })
-            )
-        )
-        
-        ;; Transfer tokens from sender to this contract
-        (match (contract-call? token transfer amount tx-sender (as-contract tx-sender))
-            (ok true)
-                (begin
-                    ;; Update balance
-                    (let ((current-balance (default-to u0 (map-get? balances { token: token, owner: tx-sender }))))
-                        (map-set balances { token: token, owner: tx-sender } (+ current-balance amount))
-                    )
-                    (ok true)
+    (let ((sender tx-sender))
+        (begin
+            ;; Verify amount is greater than 0
+            (asserts! (> amount u0) ERR-INVALID-AMOUNT)
+            
+            ;; Check if lock already exists
+            (let ((existing-lock (map-get? lock-info { owner: sender })))
+                (if existing-lock
+                    ;; If lock exists, verify it's the same token
+                    (asserts! (is-eq (get token (unwrap-panic existing-lock)) token) ERR-INVALID-TOKEN)
+                    ;; If no lock exists, create one
+                    (map-set lock-info { owner: sender } {
+                        lock-duration: u0,
+                        lock-start: block-height,
+                        token: token
+                    })
                 )
-            (err e) (err ERR-TRANSFER-FAILED)
+            )
+            
+            ;; Transfer tokens from sender to this contract
+            ;; Note: For fungible tokens, the user must approve this contract first
+            (match (contract-call? token transfer amount sender tx-sender)
+                (ok true)
+                    (begin
+                        ;; Update balance
+                        (let ((current-balance (default-to u0 (map-get? balances { token: token, owner: sender }))))
+                            (map-set balances { token: token, owner: sender } (+ current-balance amount))
+                        )
+                        (ok true)
+                    )
+                (err e) (err ERR-TRANSFER-FAILED)
+            )
         )
     )
 )
@@ -130,14 +131,15 @@
 
 ;; Withdraw tokens from the piggy bank
 (define-public (withdraw (amount uint))
-    (let ((lock (map-get? lock-info { owner: tx-sender })))
+    (let ((sender tx-sender)
+          (lock (map-get? lock-info { owner: tx-sender })))
         (asserts! (is-some lock) ERR-UNAUTHORIZED)
         
         (let ((lock-data (unwrap-panic lock))
               (token (get token lock-data))
               (lock-start (get lock-start lock-data))
               (lock-duration (get lock-duration lock-data))
-              (current-balance (default-to u0 (map-get? balances { token: token, owner: tx-sender }))))
+              (current-balance (default-to u0 (map-get? balances { token: token, owner: sender }))))
             
             ;; Verify amount is valid
             (asserts! (> amount u0) ERR-INVALID-AMOUNT)
@@ -148,31 +150,28 @@
                   (elapsed (- current-height lock-start))
                   (is-locked (< elapsed lock-duration)))
                 
-                (let ((withdraw-amount amount)
-                      (penalty u0))
-                    (if is-locked
+                (let ((withdraw-amount (if is-locked
                         ;; Calculate penalty for early withdrawal
                         (let ((penalty-amount (/ (* amount PENALTY-RATE) u1000)))
-                            (set! penalty penalty-amount)
-                            (set! withdraw-amount (- amount penalty-amount))
+                            (- amount penalty-amount)
                         )
                         ;; No penalty if lock period expired
-                        (set! withdraw-amount amount)
-                    )
+                        amount
+                    )))
                     
                     ;; Update balance
-                    (map-set balances { token: token, owner: tx-sender } (- current-balance amount))
+                    (map-set balances { token: token, owner: sender } (- current-balance amount))
                     
                     ;; Transfer tokens back to user (handle STX vs fungible tokens)
                     (let ((stx-marker (unwrap-panic (var-get contract-principal))))
                         (if (is-eq token stx-marker)
-                            ;; STX transfer
-                            (match (as-contract (stx-transfer? withdraw-amount (as-contract tx-sender) tx-sender))
+                            ;; STX transfer from contract to user
+                            (match (as-contract (stx-transfer? withdraw-amount tx-sender sender))
                                 (ok true) (ok withdraw-amount)
                                 (err e) (err ERR-TRANSFER-FAILED)
                             )
-                            ;; Fungible token transfer
-                            (match (as-contract (contract-call? token transfer withdraw-amount (as-contract tx-sender) tx-sender))
+                            ;; Fungible token transfer from contract to user
+                            (match (as-contract (contract-call? token transfer withdraw-amount tx-sender sender))
                                 (ok true) (ok withdraw-amount)
                                 (err e) (err ERR-TRANSFER-FAILED)
                             )
