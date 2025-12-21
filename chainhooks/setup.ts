@@ -11,12 +11,17 @@
  */
 
 import { SyncsHCChainhooks } from "./index.js";
-import { getChainhookConfig, getContractAddresses } from "./config.js";
+import { getChainhookConfig, getContractAddresses, toChainhookNetwork } from "./config.js";
 
 async function setupChainhooks() {
   const config = getChainhookConfig();
   const contracts = getContractAddresses(config.network);
-  const chainhooks = new SyncsHCChainhooks(config);
+  // Convert network to chainhook-compatible network (devnet -> testnet)
+  const chainhooks = new SyncsHCChainhooks({
+    baseUrl: config.baseUrl,
+    apiKey: config.apiKey,
+    network: toChainhookNetwork(config.network),
+  });
 
   console.log(`Setting up chainhooks for ${config.network} network...`);
   console.log(`Contracts:`, contracts);
@@ -61,10 +66,10 @@ async function setupChainhooks() {
     console.log("\n✅ All chainhooks registered successfully!");
     
     // List all registered hooks
-    const hooks = await chainhooks.listChainhooks();
+    const hooksResponse = await chainhooks.listChainhooks();
     console.log("\n📋 Registered chainhooks:");
-    hooks.forEach((hook: any) => {
-      console.log(`  - ${hook.name} (${hook.uuid})`);
+    hooksResponse.results.forEach((hook) => {
+      console.log(`  - ${hook.definition.name} (${hook.uuid})`);
     });
 
   } catch (error) {
