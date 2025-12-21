@@ -21,31 +21,33 @@
 
 ;; Register a new piggy bank (can be called by factory or piggy bank itself)
 (define-public (register-piggy-bank (piggy-bank principal) (owner principal) (factory principal))
-    (begin
-        ;; Check if already registered
-        (let ((existing (map-get? piggy-bank-metadata { piggy-bank: piggy-bank })))
-            (asserts! (is-none existing) ERR-ALREADY-REGISTERED)
+    (let ((current-block u0)) ;; TODO: Replace with block-height when available in Clarity 4
+        (begin
+            ;; Check if already registered
+            (let ((existing (map-get? piggy-bank-metadata { piggy-bank: piggy-bank })))
+                (asserts! (is-none existing) ERR-ALREADY-REGISTERED)
+            )
+            
+            ;; Register metadata
+            (map-set piggy-bank-metadata { piggy-bank: piggy-bank } {
+                owner: owner,
+                created-at: current-block,
+                factory: factory
+            })
+        
+            ;; Add to owner's list
+            (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))
+                (map-set owner-piggy-banks { owner: owner } (append owner-list (list piggy-bank)))
+            )
+        
+            ;; Add to global registry
+            (let ((index (var-get total-piggy-banks)))
+                (map-set all-piggy-banks index piggy-bank)
+                (var-set total-piggy-banks (+ index u1))
+            )
+            
+            (ok true)
         )
-        
-        ;; Register metadata
-        (map-set piggy-bank-metadata { piggy-bank: piggy-bank } {
-            owner: owner,
-            created-at: block-height,
-            factory: factory
-        })
-        
-        ;; Add to owner's list
-        (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))
-            (map-set owner-piggy-banks { owner: owner } (append owner-list (list piggy-bank)))
-        )
-        
-        ;; Add to global registry
-        (let ((index (var-get total-piggy-banks)))
-            (map-set all-piggy-banks index piggy-bank)
-            (var-set total-piggy-banks (+ index u1))
-        )
-        
-        (ok true)
     )
 )
 
