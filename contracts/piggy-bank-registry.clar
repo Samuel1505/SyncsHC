@@ -18,6 +18,11 @@
 (define-map all-piggy-banks uint principal) ;; Index-based map for enumeration
 (define-data-var total-piggy-banks uint u0)
 
+;; Helper function to add piggy bank to list
+(define-private (add-to-list (piggy-bank principal) (existing-list (list 10 principal)))
+    (unwrap-panic (as-max-len? (append existing-list (list piggy-bank)) u10))
+)
+
 ;; Public functions
 
 ;; Register a new piggy bank (can be called by factory or piggy bank itself)
@@ -38,9 +43,7 @@
         
             ;; Add to owner's list
             (let ((owner-list (default-to (list) (map-get? owner-piggy-banks { owner: owner }))))
-                (let ((new-list (unwrap! (as-max-len? (append owner-list (list piggy-bank)) u10) ERR-LIST-FULL)))
-                    (map-set owner-piggy-banks { owner: owner } new-list)
-                )
+                (map-set owner-piggy-banks { owner: owner } (add-to-list piggy-bank owner-list))
             )
         
             ;; Add to global registry
