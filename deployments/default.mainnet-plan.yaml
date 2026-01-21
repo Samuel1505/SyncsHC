@@ -1,0 +1,46 @@
+---
+id: 0
+name: Mainnet deployment
+network: mainnet
+stacks-node: "https://api.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoin.blockstack.com:8332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: piggy-bank
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 99620
+            path: contracts/piggy-bank.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: piggy-bank-factory
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 29250
+            path: contracts/piggy-bank-factory.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: piggy-bank-registry
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 33430
+            path: contracts/piggy-bank-registry.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: sysnc
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 2230
+            path: contracts/sysnc.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: token-manager
+            expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
+            cost: 18200
+            path: contracts/token-manager.clar
+            anchor-block-only: true
+            clarity-version: 4
+      epoch: "3.3"
