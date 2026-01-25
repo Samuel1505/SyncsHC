@@ -6,6 +6,7 @@
 (define-constant ERR-UNAUTHORIZED (err u2001))
 (define-constant ERR-ALREADY-REGISTERED (err u2002))
 (define-constant ERR-NOT-REGISTERED (err u2003))
+(define-constant ERR-INVALID-PIGGY-BANK (err u2004))
 
 ;; Data maps  
 (define-map user-piggy-bank-count { user: principal } uint)
@@ -18,6 +19,7 @@
 ;; Register a PiggyBank contract (must be called by the piggy bank owner)
 (define-public (register-piggy-bank (piggy-bank principal))
     (begin
+        (asserts! (not (is-eq piggy-bank tx-sender)) ERR-INVALID-PIGGY-BANK)
         ;; Check if already registered
         (let ((existing-owner (map-get? piggy-bank-owners { piggy-bank: piggy-bank })))
             (asserts! (is-none existing-owner) ERR-ALREADY-REGISTERED)
@@ -37,6 +39,7 @@
 ;; Unregister a PiggyBank contract (only owner)
 (define-public (unregister-piggy-bank (piggy-bank principal))
     (let ((owner (map-get? piggy-bank-owners { piggy-bank: piggy-bank })))
+        (asserts! (not (is-eq piggy-bank tx-sender)) ERR-INVALID-PIGGY-BANK)
         (asserts! (is-some owner) ERR-NOT-REGISTERED)
         (asserts! (is-eq tx-sender (unwrap-panic owner)) ERR-UNAUTHORIZED)
         (map-delete piggy-bank-owners { piggy-bank: piggy-bank })
