@@ -6,6 +6,7 @@
 (define-constant ERR-UNAUTHORIZED (err u3001))
 (define-constant ERR-TOKEN-EXISTS (err u3002))
 (define-constant ERR-TOKEN-NOT-FOUND (err u3003))
+(define-constant ERR-INVALID-INPUT (err u3004))
 
 ;; Data vars
 (define-data-var owner principal tx-sender)
@@ -19,6 +20,7 @@
 (define-public (add-supported-token (token principal))
     (begin
         (asserts! (is-eq tx-sender (var-get owner)) ERR-UNAUTHORIZED)
+        (asserts! (not (is-eq token tx-sender)) ERR-INVALID-INPUT)
         (let ((exists (default-to false (map-get? supported-tokens { token: token }))))
             (asserts! (not exists) ERR-TOKEN-EXISTS)
             (map-set supported-tokens { token: token } true)
@@ -31,6 +33,7 @@
 (define-public (remove-supported-token (token principal))
     (begin
         (asserts! (is-eq tx-sender (var-get owner)) ERR-UNAUTHORIZED)
+        (asserts! (not (is-eq token tx-sender)) ERR-INVALID-INPUT)
         (let ((exists (default-to false (map-get? supported-tokens { token: token }))))
             (asserts! exists ERR-TOKEN-NOT-FOUND)
             (map-delete supported-tokens { token: token })
@@ -43,6 +46,7 @@
 (define-public (transfer-ownership (new-owner principal))
     (begin
         (asserts! (is-eq tx-sender (var-get owner)) ERR-UNAUTHORIZED)
+        (asserts! (not (is-eq new-owner (var-get owner))) ERR-INVALID-INPUT)
         (var-set owner new-owner)
         (ok true)
     )
@@ -59,4 +63,3 @@
 (define-read-only (get-owner)
     (ok (var-get owner))
 )
-
