@@ -134,6 +134,7 @@
 ;; Set lock duration (can only be set once, before first deposit)
 (define-public (set-lock-duration (duration uint))
     (let ((lock (map-get? lock-info { owner: tx-sender })))
+        (asserts! (> duration u0) ERR-INVALID-AMOUNT)
         (if (is-some lock)
             (let ((lock-data (unwrap-panic lock)))
                 (let ((balance (default-to u0 (map-get? balances { 

@@ -7,6 +7,7 @@
 (define-constant ERR-ALREADY-REGISTERED (err u4002))
 (define-constant ERR-NOT-REGISTERED (err u4003))
 (define-constant ERR-LIST-FULL (err u4004))
+(define-constant ERR-INVALID-INPUT (err u4005))
 
 ;; Data maps
 (define-map piggy-bank-metadata { piggy-bank: principal } {
@@ -20,7 +21,7 @@
 
 ;; Helper function to add piggy bank to list
 (define-private (add-to-list (piggy-bank principal) (existing-list (list 10 principal)))
-    (unwrap-panic (as-max-len? (append existing-list (list piggy-bank)) u10))
+    (unwrap-panic (as-max-len? (append existing-list piggy-bank) u10))
 )
 
 ;; Public functions
@@ -29,6 +30,9 @@
 (define-public (register-piggy-bank (piggy-bank principal) (owner principal) (factory principal))
     (let ((current-block u0)) ;; TODO: Replace with block-height when available in Clarity 4
         (begin
+            (asserts! (not (is-eq piggy-bank tx-sender)) ERR-INVALID-INPUT)
+            (asserts! (not (is-eq owner tx-sender)) ERR-INVALID-INPUT)
+            (asserts! (not (is-eq factory tx-sender)) ERR-INVALID-INPUT)
             ;; Check if already registered
             (let ((existing (map-get? piggy-bank-metadata { piggy-bank: piggy-bank })))
                 (asserts! (is-none existing) ERR-ALREADY-REGISTERED)
@@ -59,12 +63,15 @@
 
 ;; Unregister a piggy bank (only owner)
 (define-public (unregister-piggy-bank (piggy-bank principal))
-    (let ((metadata (map-get? piggy-bank-metadata { piggy-bank: piggy-bank })))
-        (asserts! (is-some metadata) ERR-NOT-REGISTERED)
-        (let ((data (unwrap-panic metadata)))
-            (asserts! (is-eq tx-sender (get owner data)) ERR-UNAUTHORIZED)
-            (map-delete piggy-bank-metadata { piggy-bank: piggy-bank })
-            (ok true)
+    (begin
+        (asserts! (not (is-eq piggy-bank tx-sender)) ERR-INVALID-INPUT)
+        (let ((metadata (map-get? piggy-bank-metadata { piggy-bank: piggy-bank })))
+            (asserts! (is-some metadata) ERR-NOT-REGISTERED)
+            (let ((data (unwrap-panic metadata)))
+                (asserts! (is-eq tx-sender (get owner data)) ERR-UNAUTHORIZED)
+                (map-delete piggy-bank-metadata { piggy-bank: piggy-bank })
+                (ok true)
+            )
         )
     )
 )
