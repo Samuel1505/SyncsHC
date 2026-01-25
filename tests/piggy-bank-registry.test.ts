@@ -1,12 +1,19 @@
-import { describe, expect, it, beforeEach } from "vitest";
-import { Cl, simnet } from "@stacks/clarinet-sdk";
-
-const accounts = simnet.getAccounts();
-const deployer = accounts.get("deployer")!;
-const wallet1 = accounts.get("wallet_1")!;
-const wallet2 = accounts.get("wallet_2")!;
+import { describe, expect, it, beforeEach, beforeAll } from "vitest";
+import { Cl } from "@stacks/clarinet-sdk";
 
 describe("PiggyBankRegistry Contract Tests", () => {
+  let accounts: Map<string, string>;
+  let deployer: string;
+  let wallet1: string;
+  let wallet2: string;
+
+  beforeAll(() => {
+    accounts = simnet.getAccounts();
+    deployer = accounts.get("deployer")!;
+    wallet1 = accounts.get("wallet_1")!;
+    wallet2 = accounts.get("wallet_2")!;
+  });
+
   beforeEach(() => {
     // Reset simnet state before each test
   });
@@ -16,14 +23,14 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       const { result } = simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.bool(true));
     });
 
@@ -31,7 +38,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // First registration
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -39,7 +46,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Second registration should fail
       const { result } = simnet.callPublicFn(
         "piggy-bank-registry",
@@ -47,7 +54,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       expect(result).toBeErr(Cl.uint(4002)); // ERR-ALREADY-REGISTERED
     });
 
@@ -55,7 +62,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -63,7 +70,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Get metadata
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -71,7 +78,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank],
         wallet1
       );
-      
+
       expect(result).toBeOk();
       expect(result).toBeSome();
     });
@@ -80,7 +87,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -88,7 +95,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Get owner's piggy banks
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -96,7 +103,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [owner],
         wallet1
       );
-      
+
       expect(result).toBeOk();
       // Should contain the registered piggy bank
     });
@@ -105,7 +112,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Check initial total
       const initialTotal = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -114,7 +121,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         wallet1
       );
       expect(initialTotal.result).toBeOk(Cl.uint(0));
-      
+
       // Register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -122,7 +129,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Check total after registration
       const newTotal = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -138,28 +145,28 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank2 = Cl.principal(simnet.deployer + ".token-manager");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank1, owner, factory],
         wallet1
       );
-      
+
       simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank2, owner, factory],
         wallet1
       );
-      
+
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
         "get-owner-piggy-banks",
         [owner],
         wallet1
       );
-      
+
       expect(result).toBeOk();
     });
   });
@@ -169,7 +176,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // First register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -177,7 +184,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Then unregister
       const { result } = simnet.callPublicFn(
         "piggy-bank-registry",
@@ -185,20 +192,20 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.bool(true));
     });
 
     it("should fail when trying to unregister non-existent piggy bank", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
-      
+
       const { result } = simnet.callPublicFn(
         "piggy-bank-registry",
         "unregister-piggy-bank",
         [piggyBank],
         wallet1
       );
-      
+
       expect(result).toBeErr(Cl.uint(4003)); // ERR-NOT-REGISTERED
     });
 
@@ -206,7 +213,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Wallet1 registers
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -214,7 +221,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Wallet2 tries to unregister
       const { result } = simnet.callPublicFn(
         "piggy-bank-registry",
@@ -222,7 +229,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank],
         wallet2
       );
-      
+
       expect(result).toBeErr(Cl.uint(4001)); // ERR-UNAUTHORIZED
     });
 
@@ -230,7 +237,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -238,7 +245,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Unregister
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -246,7 +253,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank],
         wallet1
       );
-      
+
       // Check metadata is gone
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -254,7 +261,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.none());
     });
   });
@@ -264,7 +271,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -272,7 +279,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Get metadata
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -280,7 +287,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank],
         wallet1
       );
-      
+
       expect(result).toBeOk();
       expect(result).toBeSome();
     });
@@ -292,7 +299,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [Cl.principal(wallet1)],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.list([]));
     });
 
@@ -301,28 +308,28 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank2 = Cl.principal(simnet.deployer + ".token-manager");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank1, owner, factory],
         wallet1
       );
-      
+
       simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank2, owner, factory],
         wallet1
       );
-      
+
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
         "get-total-piggy-banks",
         [],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.uint(2));
     });
 
@@ -330,7 +337,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank = Cl.principal(simnet.deployer + ".piggy-bank");
       const owner = Cl.principal(wallet1);
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       // Register
       simnet.callPublicFn(
         "piggy-bank-registry",
@@ -338,7 +345,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [piggyBank, owner, factory],
         wallet1
       );
-      
+
       // Get by index
       const { result } = simnet.callReadOnlyFn(
         "piggy-bank-registry",
@@ -346,7 +353,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [Cl.uint(0)],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.some(piggyBank));
     });
 
@@ -357,7 +364,7 @@ describe("PiggyBankRegistry Contract Tests", () => {
         [Cl.uint(999)],
         wallet1
       );
-      
+
       expect(result).toBeOk(Cl.none());
     });
   });
@@ -367,35 +374,35 @@ describe("PiggyBankRegistry Contract Tests", () => {
       const piggyBank1 = Cl.principal(simnet.deployer + ".piggy-bank");
       const piggyBank2 = Cl.principal(simnet.deployer + ".token-manager");
       const factory = Cl.principal(simnet.deployer + ".piggy-bank-factory");
-      
+
       simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank1, Cl.principal(wallet1), factory],
         wallet1
       );
-      
+
       simnet.callPublicFn(
         "piggy-bank-registry",
         "register-piggy-bank",
         [piggyBank2, Cl.principal(wallet2), factory],
         wallet2
       );
-      
+
       const list1 = simnet.callReadOnlyFn(
         "piggy-bank-registry",
         "get-owner-piggy-banks",
         [Cl.principal(wallet1)],
         wallet1
       );
-      
+
       const list2 = simnet.callReadOnlyFn(
         "piggy-bank-registry",
         "get-owner-piggy-banks",
         [Cl.principal(wallet2)],
         wallet2
       );
-      
+
       expect(list1.result).toBeOk();
       expect(list2.result).toBeOk();
     });
