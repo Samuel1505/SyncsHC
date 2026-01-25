@@ -11,21 +11,21 @@ plan:
         - contract-publish:
             contract-name: piggy-bank
             expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
-            cost: 99620
+            cost: 100160
             path: contracts/piggy-bank.clar
             anchor-block-only: true
             clarity-version: 4
         - contract-publish:
             contract-name: piggy-bank-factory
             expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
-            cost: 29250
+            cost: 31320
             path: contracts/piggy-bank-factory.clar
             anchor-block-only: true
             clarity-version: 4
         - contract-publish:
             contract-name: piggy-bank-registry
             expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
-            cost: 33430
+            cost: 37250
             path: contracts/piggy-bank-registry.clar
             anchor-block-only: true
             clarity-version: 4
@@ -39,7 +39,7 @@ plan:
         - contract-publish:
             contract-name: token-manager
             expected-sender: SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF
-            cost: 18200
+            cost: 20780
             path: contracts/token-manager.clar
             anchor-block-only: true
             clarity-version: 4
