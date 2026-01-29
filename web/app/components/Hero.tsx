@@ -21,7 +21,7 @@ const itemVariants = {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const,
     },
   },
 };
@@ -85,7 +85,7 @@ export default function Hero() {
             <motion.span
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
-              transition={{ duration: 0.8, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.8, delay: 1.2, ease: [0.22, 1, 0.36, 1] as const }}
               className="absolute bottom-3 left-0 h-2 border-b-2 border-black dark:border-white"
               style={{ opacity: 0.2 }}
             />
