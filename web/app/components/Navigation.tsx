@@ -13,7 +13,7 @@ export default function Navigation() {
       transition={{ duration: 0.5 }}
       className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-black border-b border-black/10 dark:border-white/10"
     >
-      <div className="container mx-auto px-6 py-4">
+      <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <motion.div
             whileHover={{ scale: 1.05 }}
