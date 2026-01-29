@@ -35,7 +35,7 @@ function Step({ step, index }: { step: typeof steps[0]; index: number }) {
       className="relative"
     >
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <div className="relative">
             <motion.div
               initial={{ scale: 0 }}
