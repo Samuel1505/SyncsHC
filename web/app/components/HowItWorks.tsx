@@ -68,8 +68,8 @@ export default function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="how-it-works" ref={ref} className="py-24 px-6 bg-black dark:bg-white">
-      <div className="container mx-auto max-w-4xl">
+    <section id="how-it-works" ref={ref} className="py-24 px-6 bg-black dark:bg-white w-full flex justify-center">
+      <div className="max-w-4xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

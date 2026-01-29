@@ -9,8 +9,8 @@ export default function CTA() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-white dark:bg-black">
-      <div className="container mx-auto max-w-4xl">
+    <section ref={ref} className="py-24 px-6 bg-white dark:bg-black w-full flex justify-center">
+      <div className="max-w-4xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}

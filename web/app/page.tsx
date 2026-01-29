@@ -11,7 +11,7 @@ import PageTransition from './components/PageTransition';
 export default function Home() {
   return (
     <PageTransition>
-      <main className="min-h-screen bg-white dark:bg-black">
+      <main className="min-h-screen bg-white dark:bg-black w-full overflow-x-hidden">
         <Navigation />
         <Hero />
         <Features />

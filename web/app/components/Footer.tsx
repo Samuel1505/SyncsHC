@@ -12,7 +12,7 @@ const footerLinks = [
 export default function Footer() {
   return (
     <footer className="border-t-2 border-black dark:border-white bg-white dark:bg-black">
-      <div className="container mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

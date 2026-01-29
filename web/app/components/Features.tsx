@@ -98,8 +98,8 @@ export default function Features() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="features" ref={ref} className="py-24 px-6 bg-white dark:bg-black">
-      <div className="container mx-auto max-w-6xl">
+    <section id="features" ref={ref} className="py-24 px-6 bg-white dark:bg-black w-full flex justify-center">
+      <div className="max-w-6xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
