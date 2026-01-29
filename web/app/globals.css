@@ -11,8 +11,8 @@ html {
 }
 
 body {
-  background: white;
-  color: black;
+  background: black;
+  color: white;
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,42 +21,20 @@ body {
   overflow-x: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background: black;
-    color: white;
-  }
-}
-
 /* Custom scrollbar for webkit browsers */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: white;
+  background: black;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: black;
+  background: white;
   opacity: 0.3;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   opacity: 0.5;
-}
-
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-track {
-    background: black;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: white;
-    opacity: 0.3;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    opacity: 0.5;
-  }
 }

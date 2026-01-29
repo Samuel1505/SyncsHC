@@ -12,7 +12,7 @@ const features = [
       </svg>
     ),
     title: 'Time-Locked Savings',
-    description: 'Lock your STX or supported SIP-010 tokens for a specific block duration. Set your savings goals and stick to them with enforced time locks.',
+    description: 'Lock your STX or supported SIP-010 tokens for a specific block duration. Set your savings goals and stick to them with enforced time locks. Each block on Stacks is approximately 10 minutes, giving you precise control over your lock period.',
   },
   {
     icon: (
@@ -21,7 +21,7 @@ const features = [
       </svg>
     ),
     title: 'Flexible Withdrawals',
-    description: 'Need funds early? Withdraw before the lock expires with a 5% penalty fee. Or wait for the lock period to expire for penalty-free withdrawals.',
+    description: 'Need funds early? Withdraw before the lock expires with a transparent 5% penalty fee. The penalty is calculated automatically by the smart contract—no surprises. Or wait for the lock period to expire for completely penalty-free withdrawals.',
   },
   {
     icon: (
@@ -30,7 +30,7 @@ const features = [
       </svg>
     ),
     title: 'Factory Pattern',
-    description: 'Easily create and manage multiple Piggy Bank contracts. Each one is tracked in our global registry for complete transparency and accountability.',
+    description: 'Easily create and manage multiple Piggy Bank contracts through our factory contract. Each Piggy Bank is a separate smart contract instance, giving you complete isolation and control. All instances are tracked in our global registry for complete transparency and accountability.',
   },
   {
     icon: (
@@ -39,7 +39,7 @@ const features = [
       </svg>
     ),
     title: 'Secure & Transparent',
-    description: 'Built on Stacks blockchain with smart contracts. All transactions are transparent, verifiable, and immutable on-chain.',
+    description: 'Built on Stacks blockchain with audited smart contracts. All transactions are transparent, verifiable, and immutable on-chain. Every deposit, withdrawal, and lock status change is recorded permanently on the blockchain for complete auditability.',
   },
   {
     icon: (
@@ -48,7 +48,7 @@ const features = [
       </svg>
     ),
     title: 'Token Management',
-    description: 'Support for STX and a controlled list of SIP-010 fungible tokens. Manage your diverse crypto portfolio in one unified interface.',
+    description: 'Support for STX (Stacks native token) and a controlled list of SIP-010 fungible tokens. The token manager contract maintains a whitelist of approved tokens, ensuring security and compatibility. Manage your diverse crypto portfolio in one unified interface.',
   },
   {
     icon: (
@@ -57,7 +57,7 @@ const features = [
       </svg>
     ),
     title: 'Global Registry',
-    description: 'All Piggy Banks are tracked in a global registry. View your savings, check lock status, and monitor your progress across all accounts.',
+    description: 'All Piggy Banks are tracked in a global, on-chain registry. View your savings history, check lock status, monitor your progress across all accounts, and discover public Piggy Banks created by others. Complete transparency and discoverability.',
   },
 ];
 
@@ -74,18 +74,18 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       whileHover={{ y: -4 }}
       className="group"
     >
-      <div className="h-full p-8 border-2 border-black dark:border-white bg-white dark:bg-black hover:bg-black dark:hover:bg-white transition-all duration-300">
+      <div className="h-full p-8 bg-black hover:bg-black/90 transition-all duration-300">
         <div className="mb-6">
-          <div className="w-12 h-12 border-2 border-black dark:border-white flex items-center justify-center group-hover:bg-black dark:group-hover:bg-white transition-colors">
-            <div className="text-black dark:text-white group-hover:text-white dark:group-hover:text-black transition-colors">
+          <div className="w-12 h-12 flex items-center justify-center">
+            <div className="text-white">
               {feature.icon}
             </div>
           </div>
         </div>
-        <h3 className="text-xl font-semibold mb-3 text-black dark:text-white group-hover:text-white dark:group-hover:text-black transition-colors">
+        <h3 className="text-xl font-semibold mb-3 text-white">
           {feature.title}
         </h3>
-        <p className="text-black/60 dark:text-white/60 group-hover:text-white/80 dark:group-hover:text-black/80 leading-relaxed transition-colors">
+        <p className="text-white/60 leading-relaxed">
           {feature.description}
         </p>
       </div>
@@ -98,19 +98,19 @@ export default function Features() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="features" ref={ref} className="py-24 px-6 bg-white dark:bg-black w-full flex justify-center">
-      <div className="max-w-6xl w-full">
+    <section id="features" ref={ref} className="py-24 px-6 bg-black w-full my-20">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black dark:text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
             Why Choose SyncsHC?
           </h2>
-          <div className="w-24 h-0.5 bg-black dark:bg-white mx-auto mb-6" />
-          <p className="text-lg text-black/60 dark:text-white/60 max-w-2xl mx-auto">
+          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
+          <p className="text-lg text-white/60 max-w-2xl mx-auto">
             A secure, flexible, and transparent way to save on the Stacks blockchain
           </p>
         </motion.div>
