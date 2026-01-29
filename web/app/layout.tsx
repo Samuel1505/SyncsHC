@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SyncsHC - Decentralized Savings on Stacks",
   description: "Lock your STX and SIP-010 tokens with time-locked savings. Withdraw early with a penalty, or wait for penalty-free withdrawals.",
+  keywords: ["Stacks", "Blockchain", "Savings", "DeFi", "STX", "SIP-010"],
 };
 
 export default function RootLayout({
