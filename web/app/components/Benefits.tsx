@@ -98,7 +98,7 @@ export default function Benefits() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-32 px-6 bg-black w-full flex justify-center">
+    <section ref={ref} className="py-24 px-6 bg-black w-full flex justify-center my-20">
       <div className="max-w-6xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
