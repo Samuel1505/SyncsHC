@@ -32,15 +32,15 @@ export default function Security() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-black w-full my-20">
+    <section ref={ref} className="py-32 px-6 bg-black w-full my-20">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             Security & Trust
           </h2>
           <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
@@ -49,19 +49,19 @@ export default function Security() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {securityFeatures.map((feature, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="p-6 bg-black"
+              className="p-8 bg-black"
             >
-              <h3 className="text-xl font-semibold mb-3 text-white">
+              <h3 className="text-xl font-semibold mb-4 text-white">
                 {feature.title}
               </h3>
-              <p className="text-white/60 mb-4 leading-relaxed text-sm">
+              <p className="text-white/60 mb-6 leading-relaxed text-sm">
                 {feature.description}
               </p>
               <p className="text-xs font-medium text-white/40 uppercase tracking-wider">
