@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import { useStacks } from '../contexts/StacksContext';
 import {
-  makeContractCall,
-  broadcastTransaction,
-  AnchorMode,
   PostConditionMode,
-  StacksTransaction,
 } from '@stacks/transactions';
 import { openContractCall } from '@stacks/connect';
 
@@ -35,16 +31,6 @@ export function useContractCall() {
     setError(null);
 
     try {
-      const transaction = await makeContractCall({
-        contractAddress: options.contractAddress,
-        contractName: options.contractName,
-        functionName: options.functionName,
-        functionArgs: options.functionArgs,
-        network,
-        postConditionMode: options.postConditionMode || PostConditionMode.Deny,
-        anchorMode: AnchorMode.Any,
-      });
-
       // Use Connect to sign and broadcast
       openContractCall({
         contractAddress: options.contractAddress,
