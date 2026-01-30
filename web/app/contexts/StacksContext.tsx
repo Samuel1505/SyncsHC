@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AppConfig, UserSession, showConnect, UserData } from '@stacks/connect';
-import { StacksMainnet, StacksTestnet, StacksNetwork } from '@stacks/network';
+import { STACKS_MAINNET, STACKS_TESTNET, StacksNetwork } from '@stacks/network';
 
 // App configuration
 const appConfig = new AppConfig(['store_write', 'publish_data'], process.env.NEXT_PUBLIC_STACKS_DOMAIN || 'localhost');
@@ -12,11 +12,11 @@ const userSession = new UserSession({ appConfig });
 const getNetwork = (): StacksNetwork => {
   if (typeof window === 'undefined') {
     // Server-side: default to testnet
-    return new StacksTestnet();
+    return STACKS_TESTNET;
   }
   return process.env.NEXT_PUBLIC_STACKS_NETWORK === 'mainnet' 
-    ? new StacksMainnet() 
-    : new StacksTestnet();
+    ? STACKS_MAINNET 
+    : STACKS_TESTNET;
 };
 
 interface StacksContextType {
