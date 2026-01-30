@@ -1,13 +1,12 @@
 import {
   makeContractCall,
   broadcastTransaction,
-  AnchorMode,
   PostConditionMode,
   standardPrincipalCV,
   uintCV,
   contractPrincipalCV,
   ClarityValue,
-  StacksTransaction,
+  StacksTransactionWire,
   SignedContractCallOptions,
 } from '@stacks/transactions';
 import { StacksNetwork } from '@stacks/network';
@@ -28,7 +27,6 @@ export interface ContractCallOptions {
   network: StacksNetwork;
   senderKey?: string;
   postConditionMode?: PostConditionMode;
-  anchorMode?: AnchorMode;
 }
 
 /**
@@ -41,8 +39,7 @@ export async function createContractCall({
   functionArgs,
   network,
   postConditionMode = PostConditionMode.Deny,
-  anchorMode = AnchorMode.Any,
-}: ContractCallOptions): Promise<StacksTransaction> {
+}: ContractCallOptions): Promise<StacksTransactionWire> {
   return makeContractCall({
     contractAddress,
     contractName,
@@ -50,8 +47,7 @@ export async function createContractCall({
     functionArgs,
     network,
     postConditionMode,
-    anchorMode,
-  });
+  } as SignedContractCallOptions);
 }
 
 /**
@@ -61,7 +57,7 @@ export async function createPiggyBank(
   lockDuration: number,
   network: StacksNetwork,
   senderKey?: string
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   return createContractCall({
     contractAddress: CONTRACTS.PIGGY_BANK_FACTORY.split('.')[0],
     contractName: CONTRACTS.PIGGY_BANK_FACTORY.split('.')[1] || 'piggy-bank-factory',
@@ -79,7 +75,7 @@ export async function depositSTX(
   amount: bigint,
   network: StacksNetwork,
   senderKey?: string
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   
   return createContractCall({
@@ -101,7 +97,7 @@ export async function depositToken(
   amount: bigint,
   network: StacksNetwork,
   senderKey?: string
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   const [tokenAddress, tokenName] = tokenContract.split('.');
   
@@ -126,7 +122,7 @@ export async function setLockDuration(
   duration: number,
   network: StacksNetwork,
   senderKey?: string
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   
   return createContractCall({
@@ -146,7 +142,7 @@ export async function withdraw(
   amount: bigint,
   network: StacksNetwork,
   senderKey?: string
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   
   return createContractCall({
@@ -167,7 +163,7 @@ export function getBalanceCall(
   tokenAddress: string,
   ownerAddress: string,
   network: StacksNetwork
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   const [tokenContractAddress, tokenContractName] = tokenAddress.includes('.') 
     ? tokenAddress.split('.') 
@@ -192,7 +188,7 @@ export function getLockInfoCall(
   piggyBankAddress: string,
   ownerAddress: string,
   network: StacksNetwork
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   
   return createContractCall({
@@ -211,7 +207,7 @@ export function isLockExpiredCall(
   piggyBankAddress: string,
   ownerAddress: string,
   network: StacksNetwork
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   
   return createContractCall({
@@ -230,7 +226,7 @@ export function getRemainingLockBlocksCall(
   piggyBankAddress: string,
   ownerAddress: string,
   network: StacksNetwork
-): Promise<StacksTransaction> {
+): Promise<StacksTransactionWire> {
   const [contractAddress, contractName] = piggyBankAddress.split('.');
   
   return createContractCall({
@@ -246,9 +242,9 @@ export function getRemainingLockBlocksCall(
  * Broadcast a signed transaction
  */
 export async function broadcastTx(
-  transaction: StacksTransaction,
+  transaction: StacksTransactionWire,
   network: StacksNetwork
 ): Promise<string> {
-  const response = await broadcastTransaction(transaction, network);
+  const response = await broadcastTransaction({ transaction, network });
   return response.txid;
 }
