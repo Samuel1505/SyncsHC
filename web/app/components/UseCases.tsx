@@ -43,7 +43,7 @@ function UseCaseCard({ useCase, index }: { useCase: typeof useCases[0]; index: n
       transition={{ duration: 0.6, delay: index * 0.15 }}
       className="group"
     >
-      <div className="h-full p-8 bg-black hover:bg-black/90 transition-all duration-300">
+      <div className="h-full p-10 bg-black hover:bg-black/90 transition-all duration-300">
         <div className="mb-4">
           <span className="inline-block px-3 py-1 text-xs font-medium text-white/80">
             {useCase.duration}
@@ -70,15 +70,15 @@ export default function UseCases() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-black w-full my-20">
+    <section ref={ref} className="py-32 px-6 bg-black w-full my-20">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             Real-World Use Cases
           </h2>
           <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
@@ -87,7 +87,7 @@ export default function UseCases() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-8">
           {useCases.map((useCase, index) => (
             <UseCaseCard key={index} useCase={useCase} index={index} />
           ))}
