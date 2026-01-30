@@ -74,8 +74,8 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       whileHover={{ y: -4 }}
       className="group"
     >
-      <div className="h-full p-8 bg-black hover:bg-black/90 transition-all duration-300">
-        <div className="mb-6">
+      <div className="h-full p-10 bg-black hover:bg-black/90 transition-all duration-300">
+        <div className="mb-8">
           <div className="w-12 h-12 flex items-center justify-center">
             <div className="text-white">
               {feature.icon}
@@ -98,15 +98,15 @@ export default function Features() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="features" ref={ref} className="py-24 px-6 bg-black w-full my-20">
+    <section id="features" ref={ref} className="py-32 px-6 bg-black w-full my-20">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             Why Choose SyncsHC?
           </h2>
           <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
@@ -115,7 +115,7 @@ export default function Features() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <FeatureCard key={index} feature={feature} index={index} />
           ))}

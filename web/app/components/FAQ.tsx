@@ -95,15 +95,15 @@ export default function FAQ() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-black w-full my-20">
+    <section ref={ref} className="py-32 px-6 bg-black w-full my-20">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
             Frequently Asked Questions
           </h2>
           <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
@@ -112,7 +112,7 @@ export default function FAQ() {
           </p>
         </motion.div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {faqs.map((faq, index) => (
             <FAQItem key={index} faq={faq} index={index} />
           ))}
