@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import WalletConnect from './WalletConnect';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,13 +51,7 @@ export default function Navigation() {
             >
               Docs
             </motion.a>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-6 py-2.5 text-sm font-medium bg-white text-black hover:bg-white/90 transition-all"
-            >
-              Connect Wallet
-            </motion.button>
+            <WalletConnect />
           </div>
 
           <button
@@ -99,9 +94,9 @@ export default function Navigation() {
             <a href="#docs" className="block text-sm font-medium text-white/70 hover:text-white">
               Docs
             </a>
-            <button className="w-full px-6 py-2.5 text-sm font-medium bg-white text-black">
-              Connect Wallet
-            </button>
+            <div className="w-full">
+              <WalletConnect />
+            </div>
           </div>
         </motion.div>
       </div>
