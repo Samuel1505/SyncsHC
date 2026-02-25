@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useState } from 'react';
 import WalletConnect from './WalletConnect';
 
@@ -21,12 +22,14 @@ export default function Navigation() {
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-3"
           >
-            <div className="h-10 w-10 border-2 border-white flex items-center justify-center">
-              <span className="text-white font-bold text-xl">S</span>
-            </div>
-            <span className="text-xl font-semibold text-white tracking-tight">
-              SyncsHC
-            </span>
+            <Link href="/" className="flex items-center gap-3">
+              <div className="h-10 w-10 border-2 border-white flex items-center justify-center">
+                <span className="text-white font-bold text-xl">S</span>
+              </div>
+              <span className="text-xl font-semibold text-white tracking-tight">
+                SyncsHC
+              </span>
+            </Link>
           </motion.div>
 
           <div className="hidden md:flex items-center gap-8">
@@ -44,13 +47,30 @@ export default function Navigation() {
             >
               How It Works
             </motion.a>
-            <motion.a
-              href="#docs"
-              whileHover={{ y: -2 }}
-              className="text-sm font-medium text-white/70 hover:text-white transition-colors"
-            >
-              Docs
-            </motion.a>
+            <motion.div whileHover={{ y: -2 }}>
+              <Link
+                href="/savings"
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors"
+              >
+                Savings
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ y: -2 }}>
+              <Link
+                href="/locking"
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors"
+              >
+                Locking
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ y: -2 }}>
+              <Link
+                href="/docs"
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors"
+              >
+                Docs
+              </Link>
+            </motion.div>
             <WalletConnect />
           </div>
 
@@ -91,9 +111,15 @@ export default function Navigation() {
             <a href="#how-it-works" className="block text-sm font-medium text-white/70 hover:text-white">
               How It Works
             </a>
-            <a href="#docs" className="block text-sm font-medium text-white/70 hover:text-white">
+            <Link href="/savings" className="block text-sm font-medium text-white/70 hover:text-white">
+              Savings
+            </Link>
+            <Link href="/locking" className="block text-sm font-medium text-white/70 hover:text-white">
+              Locking
+            </Link>
+            <Link href="/docs" className="block text-sm font-medium text-white/70 hover:text-white">
               Docs
-            </a>
+            </Link>
             <div className="w-full">
               <WalletConnect />
             </div>
