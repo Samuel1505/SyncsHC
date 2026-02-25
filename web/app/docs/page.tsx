@@ -9,7 +9,7 @@ export default function DocsPage() {
     <PageTransition>
       <main className="min-h-screen w-full overflow-x-hidden">
         <Navigation />
-        <section className="pt-32 pb-20 px-6 bg-gradient-to-b from-indigo-950/80 via-purple-950/80 to-cyan-950/80 w-full">
+        <section className="pt-32 pb-20 px-6 bg-linear-to-b from-indigo-950/80 via-purple-950/80 to-cyan-950/80 w-full">
           <div className="max-w-5xl mx-auto">
             <header className="mb-12 text-center">
               <p className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium tracking-wider uppercase border border-violet-400/40 text-violet-100/90 rounded-full bg-white/5 backdrop-blur">
