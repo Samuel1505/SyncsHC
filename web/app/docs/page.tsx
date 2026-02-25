@@ -57,7 +57,7 @@ export default function DocsPage() {
                 </p>
               </section>
 
-              <section className="p-6 rounded-2xl bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-violet-900/40 border border-violet-500/30 backdrop-blur-sm">
+              <section className="p-6 rounded-2xl bg-linear-to-br from-indigo-900/40 via-purple-900/40 to-violet-900/40 border border-violet-500/30 backdrop-blur-sm">
                 <h2 className="text-xl md:text-2xl font-semibold mb-3 text-violet-100">
                   Supported tokens
                 </h2>
