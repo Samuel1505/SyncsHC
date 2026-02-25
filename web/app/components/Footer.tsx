@@ -1,12 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const footerLinks = [
-  { label: 'Documentation', href: '#docs' },
-  { label: 'GitHub', href: 'https://github.com' },
-  { label: 'Terms', href: '#terms' },
-  { label: 'Privacy', href: '#privacy' },
+  { label: 'Documentation', href: '/docs', type: 'internal' as const },
+  { label: 'GitHub', href: 'https://github.com', type: 'external' as const },
+  { label: 'Terms', href: '/terms', type: 'internal' as const },
+  { label: 'Privacy', href: '/privacy', type: 'internal' as const },
 ];
 
 export default function Footer() {
@@ -36,16 +37,29 @@ export default function Footer() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex flex-wrap gap-6 justify-center"
           >
-            {footerLinks.map((link, index) => (
-              <motion.a
-                key={index}
-                href={link.href}
-                whileHover={{ y: -2 }}
-                className="text-sm font-medium text-violet-200/70 hover:text-violet-100 transition-colors"
-              >
-                {link.label}
-              </motion.a>
-            ))}
+            {footerLinks.map((link, index) =>
+              link.type === 'internal' ? (
+                <motion.div key={index} whileHover={{ y: -2 }}>
+                  <Link
+                    href={link.href}
+                    className="text-sm font-medium text-violet-200/70 hover:text-violet-100 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
+              ) : (
+                <motion.a
+                  key={index}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  whileHover={{ y: -2 }}
+                  className="text-sm font-medium text-violet-200/70 hover:text-violet-100 transition-colors"
+                >
+                  {link.label}
+                </motion.a>
+              )
+            )}
           </motion.div>
         </div>
 
