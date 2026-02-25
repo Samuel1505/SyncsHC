@@ -43,20 +43,20 @@ function UseCaseCard({ useCase, index }: { useCase: typeof useCases[0]; index: n
       transition={{ duration: 0.6, delay: index * 0.15 }}
       className="group"
     >
-      <div className="h-full p-10 bg-black hover:bg-black/90 transition-all duration-300">
+      <div className="h-full p-8 rounded-3xl bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-violet-900/40 border-2 border-indigo-500/20 backdrop-blur-sm hover:border-indigo-400/50 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300 group">
         <div className="mb-4">
-          <span className="inline-block px-3 py-1 text-xs font-medium text-white/80">
+          <span className="inline-block px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full bg-gradient-to-r from-indigo-500/30 to-purple-500/30 border border-indigo-400/30 text-indigo-200">
             {useCase.duration}
           </span>
         </div>
-        <h3 className="text-2xl font-semibold mb-3 text-white">
+        <h3 className="text-2xl font-bold mb-4 text-indigo-100 group-hover:text-white transition-colors">
           {useCase.title}
         </h3>
-        <p className="text-white/60 leading-relaxed mb-4">
+        <p className="text-indigo-200/70 leading-relaxed mb-5 text-sm group-hover:text-indigo-200/90 transition-colors">
           {useCase.description}
         </p>
-        <div className="pt-4 border-t border-white/10">
-          <p className="text-sm font-medium text-white/40">
+        <div className="pt-4 border-t border-indigo-500/20">
+          <p className="text-sm font-semibold text-indigo-300/80">
             Example: {useCase.example}
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function UseCases() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-32 px-6 bg-black w-full my-20">
+    <section ref={ref} className="py-20 px-6 bg-gradient-to-b from-cyan-950/50 to-indigo-950/50 w-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,11 +78,11 @@ export default function UseCases() {
           transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-300 via-purple-300 to-violet-300 bg-clip-text text-transparent">
             Real-World Use Cases
           </h2>
-          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
-          <p className="text-lg text-white/60 max-w-2xl mx-auto">
+          <div className="w-32 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-500 mx-auto mb-6 rounded-full" />
+          <p className="text-lg text-indigo-100/80 max-w-2xl mx-auto">
             See how SyncsHC helps you achieve your financial goals
           </p>
         </motion.div>
