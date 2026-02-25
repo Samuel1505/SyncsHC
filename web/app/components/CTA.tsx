@@ -9,7 +9,7 @@ export default function CTA() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-20 px-6 bg-gradient-to-b from-cyan-950/50 via-indigo-950/50 to-purple-950/50 w-full">
+    <section ref={ref} className="py-20 px-6 mt-24 bg-gradient-to-b from-cyan-950/50 via-indigo-950/50 to-purple-950/50 w-full">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
