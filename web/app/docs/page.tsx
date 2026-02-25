@@ -26,7 +26,7 @@ export default function DocsPage() {
             </header>
 
             <div className="space-y-10 text-sm md:text-base text-violet-100/80">
-              <section className="p-6 rounded-2xl bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-violet-900/40 border border-violet-500/30 backdrop-blur-sm">
+              <section className="p-6 rounded-2xl bg-linear-to-br from-indigo-900/40 via-purple-900/40 to-violet-900/40 border border-violet-500/30 backdrop-blur-sm">
                 <h2 className="text-xl md:text-2xl font-semibold mb-3 text-violet-100">
                   Core contracts
                 </h2>
