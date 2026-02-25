@@ -32,7 +32,7 @@ export default function Security() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-32 px-6 bg-black w-full my-20">
+    <section ref={ref} className="py-20 px-6 mt-32 md:mt-40 bg-gradient-to-b from-purple-950/50 via-indigo-950/50 to-cyan-950/50 w-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,11 +40,11 @@ export default function Security() {
           transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-emerald-300 via-teal-300 to-cyan-300 bg-clip-text text-transparent">
             Security & Trust
           </h2>
-          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
-          <p className="text-lg text-white/60 max-w-2xl mx-auto">
+          <div className="w-32 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 mx-auto mb-6 rounded-full" />
+          <p className="text-lg text-emerald-100/80 max-w-2xl mx-auto">
             Your funds are protected by blockchain technology, not promises
           </p>
         </motion.div>
@@ -56,15 +56,15 @@ export default function Security() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="p-8 bg-black"
+              className="p-8 rounded-3xl bg-gradient-to-br from-emerald-900/40 via-teal-900/40 to-cyan-900/40 border-2 border-emerald-500/20 backdrop-blur-sm hover:border-emerald-400/50 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 group"
             >
-              <h3 className="text-xl font-semibold mb-4 text-white">
+              <h3 className="text-xl font-bold mb-4 text-emerald-100 group-hover:text-white transition-colors">
                 {feature.title}
               </h3>
-              <p className="text-white/60 mb-6 leading-relaxed text-sm">
+              <p className="text-emerald-200/70 mb-6 leading-relaxed text-sm group-hover:text-emerald-200/90 transition-colors">
                 {feature.description}
               </p>
-              <p className="text-xs font-medium text-white/40 uppercase tracking-wider">
+              <p className="text-xs font-bold text-emerald-300/80 uppercase tracking-wider">
                 {feature.detail}
               </p>
             </motion.div>
@@ -77,11 +77,11 @@ export default function Security() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <div className="inline-block p-8 bg-black">
-            <p className="text-white text-lg mb-2">
-              <strong>Remember:</strong> You control your private keys
+          <div className="inline-block p-8 rounded-3xl bg-gradient-to-br from-emerald-900/40 to-teal-900/40 border-2 border-emerald-500/30 backdrop-blur-sm shadow-xl shadow-emerald-500/10">
+            <p className="text-emerald-100 text-lg mb-2 font-semibold">
+              <strong className="text-emerald-200">Remember:</strong> You control your private keys
             </p>
-            <p className="text-white/60 text-sm">
+            <p className="text-emerald-200/70 text-sm">
               Only you can authorize transactions. No one can access your funds without your private key.
             </p>
           </div>

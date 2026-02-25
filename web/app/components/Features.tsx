@@ -74,18 +74,18 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       whileHover={{ y: -4 }}
       className="group"
     >
-      <div className="h-full p-10 bg-black hover:bg-black/90 transition-all duration-300">
-        <div className="mb-8">
-          <div className="w-12 h-12 flex items-center justify-center">
-            <div className="text-white">
+      <div className="h-full p-8 rounded-3xl bg-gradient-to-br from-violet-900/40 via-purple-900/40 to-fuchsia-900/40 border-2 border-violet-500/20 backdrop-blur-sm hover:border-violet-400/50 hover:shadow-2xl hover:shadow-violet-500/20 transition-all duration-300 group">
+        <div className="mb-6">
+          <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30 border border-violet-400/30 group-hover:scale-110 transition-transform duration-300">
+            <div className="text-violet-200 group-hover:text-violet-100 transition-colors">
               {feature.icon}
             </div>
           </div>
         </div>
-        <h3 className="text-xl font-semibold mb-3 text-white">
+        <h3 className="text-xl font-bold mb-4 text-violet-100 group-hover:text-white transition-colors">
           {feature.title}
         </h3>
-        <p className="text-white/60 leading-relaxed">
+        <p className="text-violet-200/70 leading-relaxed text-sm group-hover:text-violet-200/90 transition-colors">
           {feature.description}
         </p>
       </div>
@@ -98,7 +98,7 @@ export default function Features() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="features" ref={ref} className="py-32 px-6 bg-black w-full my-20">
+    <section id="features" ref={ref} className="py-20 px-6 mt-32 md:mt-40 bg-gradient-to-b from-indigo-950/50 to-purple-950/50 w-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -106,11 +106,11 @@ export default function Features() {
           transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-300 bg-clip-text text-transparent">
             Why Choose SyncsHC?
           </h2>
-          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
-          <p className="text-lg text-white/60 max-w-2xl mx-auto">
+          <div className="w-32 h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 mx-auto mb-6 rounded-full" />
+          <p className="text-lg text-violet-100/80 max-w-2xl mx-auto">
             A secure, flexible, and transparent way to save on the Stacks blockchain
           </p>
         </motion.div>

@@ -74,18 +74,18 @@ function BenefitCard({ benefit, index }: { benefit: typeof benefits[0]; index: n
       whileHover={{ y: -4 }}
       className="group"
     >
-      <div className="h-full p-10 bg-black hover:bg-black/90 transition-all duration-300">
-        <div className="mb-8">
-          <div className="w-16 h-16 flex items-center justify-center">
-            <div className="text-white">
+      <div className="h-full p-8 rounded-3xl bg-gradient-to-br from-cyan-900/40 via-blue-900/40 to-indigo-900/40 border-2 border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/50 hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 group">
+        <div className="mb-6">
+          <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500/30 to-blue-500/30 border border-cyan-400/30 group-hover:scale-110 transition-transform duration-300">
+            <div className="text-cyan-200 group-hover:text-cyan-100 transition-colors">
               {benefit.icon}
             </div>
           </div>
         </div>
-        <h3 className="text-2xl font-semibold mb-4 text-white">
+        <h3 className="text-2xl font-bold mb-4 text-cyan-100 group-hover:text-white transition-colors">
           {benefit.title}
         </h3>
-        <p className="text-white/60 leading-relaxed">
+        <p className="text-cyan-200/70 leading-relaxed text-sm group-hover:text-cyan-200/90 transition-colors">
           {benefit.description}
         </p>
       </div>
@@ -98,7 +98,7 @@ export default function Benefits() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-32 px-6 bg-black w-full my-20">
+    <section ref={ref} className="py-20 px-6 mt-32 md:mt-40 bg-gradient-to-b from-purple-950/50 to-cyan-950/50 w-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -106,11 +106,11 @@ export default function Benefits() {
           transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-300 bg-clip-text text-transparent">
             Why Save with SyncsHC?
           </h2>
-          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
-          <p className="text-lg text-white/60 max-w-2xl mx-auto">
+          <div className="w-32 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 mx-auto mb-6 rounded-full" />
+          <p className="text-lg text-cyan-100/80 max-w-2xl mx-auto">
             Discover the advantages of decentralized savings on the Stacks blockchain
           </p>
         </motion.div>

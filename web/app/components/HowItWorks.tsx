@@ -41,20 +41,20 @@ function Step({ step, index }: { step: typeof steps[0]; index: number }) {
               initial={{ scale: 0 }}
               animate={isInView ? { scale: 1 } : { scale: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 + 0.3 }}
-              className="w-20 h-20 flex items-center justify-center bg-black"
+              className="w-20 h-20 flex items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500/40 to-pink-500/40 border-2 border-fuchsia-400/40 shadow-lg shadow-fuchsia-500/20"
             >
-              <span className="text-2xl font-bold text-white">{step.number}</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-fuchsia-200 to-pink-200 bg-clip-text text-transparent">{step.number}</span>
             </motion.div>
             {index < steps.length - 1 && (
-              <div className="hidden md:block absolute top-20 left-1/2 w-0.5 h-32 bg-white transform -translate-x-1/2" />
+              <div className="hidden md:block absolute top-20 left-1/2 w-1 h-32 bg-gradient-to-b from-fuchsia-500/40 to-pink-500/40 transform -translate-x-1/2 rounded-full" />
             )}
           </div>
         </div>
-        <div className="flex-1 pt-2">
-          <h3 className="text-2xl font-semibold mb-4 text-white">
+        <div className="flex-1 pt-2 p-6 rounded-2xl bg-gradient-to-br from-fuchsia-900/30 to-pink-900/30 border border-fuchsia-500/20 backdrop-blur-sm">
+          <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-fuchsia-200 to-pink-200 bg-clip-text text-transparent">
             {step.title}
           </h3>
-          <p className="text-white/60 leading-relaxed">
+          <p className="text-fuchsia-100/80 leading-relaxed text-sm">
             {step.description}
           </p>
         </div>
@@ -68,7 +68,7 @@ export default function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="how-it-works" ref={ref} className="py-32 px-6 bg-black w-full my-20">
+    <section id="how-it-works" ref={ref} className="py-20 px-6 mt-32 md:mt-40 bg-gradient-to-b from-indigo-950/50 via-purple-950/50 to-fuchsia-950/50 w-full">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -76,11 +76,11 @@ export default function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-fuchsia-300 via-pink-300 to-rose-300 bg-clip-text text-transparent">
             How It Works
           </h2>
-          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
-          <p className="text-lg text-white/60">
+          <div className="w-32 h-1 bg-gradient-to-r from-fuchsia-500 via-pink-500 to-rose-500 mx-auto mb-6 rounded-full" />
+          <p className="text-lg text-fuchsia-100/80">
             Get started in three simple steps
           </p>
         </motion.div>
