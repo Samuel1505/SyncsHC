@@ -12,7 +12,7 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t-2 border-violet-500/20 bg-gradient-to-b from-indigo-950/80 via-purple-950/80 to-cyan-950/80 backdrop-blur-xl py-12">
+    <footer className="border-t-2 border-violet-500/20 bg-linear-to-b from-indigo-950/80 via-purple-950/80 to-cyan-950/80 backdrop-blur-xl py-12">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <motion.div
