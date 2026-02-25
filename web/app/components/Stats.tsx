@@ -39,19 +39,19 @@ function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="text-center"
     >
-      <div className="mb-4">
+      <div className="p-8 rounded-3xl bg-gradient-to-br from-violet-900/30 via-purple-900/30 to-fuchsia-900/30 border-2 border-violet-500/20 backdrop-blur-sm hover:border-violet-400/40 transition-all duration-300 shadow-xl shadow-violet-500/10">
         <motion.div
           initial={{ scale: 0 }}
           animate={isInView ? { scale: 1 } : { scale: 0 }}
           transition={{ duration: 0.5, delay: index * 0.1 + 0.2, type: 'spring' }}
-          className="text-5xl md:text-6xl font-bold text-white mb-2"
+          className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-300 bg-clip-text text-transparent mb-3"
         >
           {stat.value}
         </motion.div>
-        <h3 className="text-xl font-semibold text-white mb-2">
+        <h3 className="text-xl font-bold text-violet-100 mb-3">
           {stat.label}
         </h3>
-        <p className="text-sm text-white/60 max-w-xs mx-auto">
+        <p className="text-sm text-violet-200/70 max-w-xs mx-auto leading-relaxed">
           {stat.description}
         </p>
       </div>
@@ -64,7 +64,7 @@ export default function Stats() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-32 px-6 bg-black w-full mb-16">
+    <section ref={ref} className="py-20 px-6 bg-gradient-to-b from-cyan-950/50 to-indigo-950/50 w-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -72,11 +72,11 @@ export default function Stats() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-violet-300 via-fuchsia-300 to-cyan-300 bg-clip-text text-transparent">
             Platform Statistics
           </h2>
-          <div className="w-24 h-0.5 bg-white mx-auto mb-6" />
-          <p className="text-white/60 max-w-2xl mx-auto">
+          <div className="w-32 h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 mx-auto mb-6 rounded-full" />
+          <p className="text-violet-100/80 max-w-2xl mx-auto text-lg">
             Built for transparency, security, and user empowerment
           </p>
         </motion.div>
