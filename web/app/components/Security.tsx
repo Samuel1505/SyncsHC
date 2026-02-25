@@ -32,7 +32,7 @@ export default function Security() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="py-20 px-6 mt-24 bg-gradient-to-b from-purple-950/50 via-indigo-950/50 to-cyan-950/50 w-full">
+    <section ref={ref} className="py-20 px-6 mt-32 md:mt-40 bg-gradient-to-b from-purple-950/50 via-indigo-950/50 to-cyan-950/50 w-full">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
