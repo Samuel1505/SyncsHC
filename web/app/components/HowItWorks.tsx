@@ -68,7 +68,7 @@ export default function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section id="how-it-works" ref={ref} className="py-20 px-6 mt-24 bg-gradient-to-b from-indigo-950/50 via-purple-950/50 to-fuchsia-950/50 w-full">
+    <section id="how-it-works" ref={ref} className="py-20 px-6 mt-32 md:mt-40 bg-gradient-to-b from-indigo-950/50 via-purple-950/50 to-fuchsia-950/50 w-full">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
