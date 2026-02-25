@@ -49,6 +49,14 @@ export default function Navigation() {
             </motion.a>
             <motion.div whileHover={{ y: -2 }}>
               <Link
+                href="/piggy-bank"
+                className="text-sm font-semibold text-white px-4 py-2 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 hover:border-white/40 transition-colors"
+              >
+                Create Piggy Bank
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ y: -2 }}>
+              <Link
                 href="/savings"
                 className="text-sm font-medium text-white/70 hover:text-white transition-colors"
               >
@@ -111,6 +119,9 @@ export default function Navigation() {
             <a href="#how-it-works" className="block text-sm font-medium text-white/70 hover:text-white">
               How It Works
             </a>
+            <Link href="/piggy-bank" className="block text-sm font-semibold text-white/90 hover:text-white">
+              Create Piggy Bank
+            </Link>
             <Link href="/savings" className="block text-sm font-medium text-white/70 hover:text-white">
               Savings
             </Link>
