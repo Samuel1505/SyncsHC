@@ -13,7 +13,7 @@ export default function DocsPage() {
           <div className="max-w-5xl mx-auto">
             <header className="mb-12 text-center">
               <p className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium tracking-wider uppercase border border-violet-400/40 text-violet-100/90 rounded-full bg-white/5 backdrop-blur">
-                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-violet-400 to-cyan-300" />
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-linear-to-r from-violet-400 to-cyan-300" />
                 SyncsHC · Documentation
               </p>
               <h1 className="mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-200 via-fuchsia-200 to-cyan-200 bg-clip-text text-transparent">
