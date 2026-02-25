@@ -46,7 +46,7 @@ function Step({ step, index }: { step: typeof steps[0]; index: number }) {
               <span className="text-2xl font-bold bg-gradient-to-r from-fuchsia-200 to-pink-200 bg-clip-text text-transparent">{step.number}</span>
             </motion.div>
             {index < steps.length - 1 && (
-              <div className="hidden md:block absolute top-20 left-1/2 w-0.5 h-32 bg-white transform -translate-x-1/2" />
+              <div className="hidden md:block absolute top-20 left-1/2 w-1 h-32 bg-gradient-to-b from-fuchsia-500/40 to-pink-500/40 transform -translate-x-1/2 rounded-full" />
             )}
           </div>
         </div>
