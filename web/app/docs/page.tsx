@@ -16,7 +16,7 @@ export default function DocsPage() {
                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-linear-to-r from-violet-400 to-cyan-300" />
                 SyncsHC · Documentation
               </p>
-              <h1 className="mt-6 text-4xl md:text-5xl font-bold bg-gradient-to-r from-violet-200 via-fuchsia-200 to-cyan-200 bg-clip-text text-transparent">
+              <h1 className="mt-6 text-4xl md:text-5xl font-bold bg-linear-to-r from-violet-200 via-fuchsia-200 to-cyan-200 bg-clip-text text-transparent">
                 How SyncsHC works under the hood
               </h1>
               <p className="mt-4 text-base md:text-lg text-violet-100/80 max-w-2xl mx-auto">
