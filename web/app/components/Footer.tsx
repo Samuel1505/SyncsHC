@@ -25,7 +25,7 @@ export default function Footer() {
             <div className="h-8 w-8 border-2 border-violet-400 rounded-lg bg-linear-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center">
               <span className="text-violet-200 font-bold">S</span>
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-violet-200 to-fuchsia-200 bg-clip-text text-transparent tracking-tight">
+            <span className="text-lg font-bold bg-linear-to-r from-violet-200 to-fuchsia-200 bg-clip-text text-transparent tracking-tight">
               SyncsHC
             </span>
           </motion.div>
