@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   title: "SyncsHC — Save Smarter. Lock Stronger.",
   description:
     "A decentralized savings protocol on Stacks. Lock STX or SIP-010 tokens for a set duration and earn your financial discipline.",
+  other: {
+    "talentapp:project_verification":
+      "3aa63f6d8e5b065d53dcd18b62c8aee397bb04468d7546f772629c1a1ff77a30f912ef244a186c4772c6f74b85a4888bbfda0d90ad641bb88bf90fd21860c0de",
+  },
 };
 
 export default function RootLayout({
