@@ -3,191 +3,166 @@ import {
   broadcastTransaction,
   AnchorMode,
   PostConditionMode,
-  uintCV,
-  principalCV,
   getAddressFromPrivateKey,
-} from "@stacks/transactions";
-import { createNetwork, ChainId } from "@stacks/network";
-import { Wallet } from "@stacks/keychain";
+  Cl
+} from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
+import { generateWallet } from '@stacks/wallet-sdk';
 
-// Configuration
-const DEPLOYER_ADDRESS = process.env.CONTRACT_ADDRESS || "SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF";
-const NETWORK_NAME = process.env.NETWORK || "mainnet";
-const API_URL = NETWORK_NAME === "mainnet"
-  ? "https://api.hiro.so"
-  : "https://api.testnet.hiro.so";
+// We use the Mainnet network as requested
+const network = STACKS_MAINNET;
 
-const network = createNetwork({
-  network: NETWORK_NAME === "mainnet" ? "mainnet" : "testnet",
-  client: {
-    baseUrl: API_URL,
-  },
-});
+// Deployer address provided by user
+const deployerAddress = 'SP1ZE73TWJ4WBFHZBBQJAMJDV23K678RXWPDGNHYF';
 
-interface ContractFunction {
-  name: string;
-  getArgs: (sender: string) => any[];
-}
+async function main() {
+  // Pass the mnemonic phrase here instead of the hex private key
+  const SENDER_MNEMONIC = process.env.SENDER_KEY;
 
-interface ContractInfo {
-  address: string;
-  name: string;
-  functions: ContractFunction[];
-}
-
-const contracts: ContractInfo[] = [
-  {
-    address: DEPLOYER_ADDRESS,
-    name: "piggy-bank",
-    functions: [
-      { name: "deposit-stx", getArgs: () => [uintCV(1)] },
-      { name: "set-lock-duration", getArgs: () => [uintCV(100)] },
-      { name: "withdraw", getArgs: () => [uintCV(1)] },
-    ]
-  },
-  {
-    address: DEPLOYER_ADDRESS,
-    name: "piggy-bank-factory",
-    functions: [
-      { name: "register-piggy-bank", getArgs: (sender) => [principalCV(`${sender}.dummy-bank-${Math.floor(Math.random() * 1000)}`)] },
-      { name: "unregister-piggy-bank", getArgs: (sender) => [principalCV(`${sender}.dummy-bank-${Math.floor(Math.random() * 1000)}`)] },
-    ]
-  },
-  {
-    address: DEPLOYER_ADDRESS,
-    name: "token-manager",
-    functions: [
-      { name: "add-supported-token", getArgs: () => [principalCV(`${DEPLOYER_ADDRESS}.dummy-token`)] },
-      { name: "remove-supported-token", getArgs: () => [principalCV(`${DEPLOYER_ADDRESS}.dummy-token`)] },
-      { name: "transfer-ownership", getArgs: (sender) => [principalCV(sender)] },
-    ]
-  }
-];
-
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function getAccountInfo(address: string) {
-  try {
-    const response = await fetch(`${API_URL}/v2/accounts/${address}?proof=0`);
-    if (!response.ok) return { balance: BigInt(0), nonce: 0 };
-    const account = await response.json();
-    return {
-      balance: BigInt(account.balance || 0),
-      nonce: account.nonce || 0,
-    };
-  } catch {
-    return { balance: BigInt(0), nonce: 0 };
-  }
-}
-
-async function spamFarm() {
-  console.log("🚀 Stacks Transaction Spam Farm (Multi-Contract Edition) 🚀");
-  console.log("-----------------------------------------");
-  console.log(`Network: ${NETWORK_NAME.toUpperCase()}`);
-  console.log(`Deployer: ${DEPLOYER_ADDRESS}`);
-  console.log(`Contracts being targeted: ${contracts.map(c => c.name).join(", ")}`);
-  console.log("Press Ctrl+C to stop at any time.");
-  console.log("-----------------------------------------");
-
-  let privateKey = process.env.STACKS_PRIVATE_KEY;
-  if (!privateKey) {
-    console.error("❌ ERROR: STACKS_PRIVATE_KEY environment variable is not set.");
-    console.log("Usage: STACKS_PRIVATE_KEY='your key or mnemonic' tsx scripts/spam-farm.ts");
+  if (!SENDER_MNEMONIC) {
+    console.error("❌ Missing SENDER_KEY environment variable!");
+    console.error("Usage: SENDER_KEY=\"your twenty four word mnemonic phrase here\" npx tsx scripts/spam-farm.ts");
     process.exit(1);
   }
 
-  // Handle mnemonic
-  if (privateKey.trim().split(/\s+/).length >= 12) {
-    console.log("📝 Detected mnemonic phrase. Deriving private key...");
-    const chainId = NETWORK_NAME === "mainnet" ? ChainId.Mainnet : ChainId.Testnet;
-    try {
-      const wallet = await Wallet.restore("", privateKey, chainId as any);
-      privateKey = wallet.stacksPrivateKey.toString("hex");
-    } catch (e: any) {
-      console.error("❌ ERROR: Failed to restore wallet from mnemonic:", e.message);
-      process.exit(1);
-    }
-  }
-
-  const senderAddress = getAddressFromPrivateKey(privateKey);
-  console.log(`Sender Address: ${senderAddress}`);
-
-  let txCount = 0;
-  let keepRunning = true;
-
-  process.on("SIGINT", () => {
-    console.log("\n🛑 Stopping spam farm...");
-    keepRunning = false;
+  console.log("Deriving private key from mnemonic...");
+  
+  // Generate wallet from mnemonic
+  const wallet = await generateWallet({
+    secretKey: SENDER_MNEMONIC,
+    password: 'password' // A generic password as we don't store the encrypted wallet
   });
 
-  // Fetch initial nonce once at the beginning
-  const accountInfo = await getAccountInfo(senderAddress);
-  let currentNonce = accountInfo.nonce;
+  // Since generateWallet generates only 1 account by default, account 0 is wallet.accounts[0]
+  const SENDER_KEY = wallet.accounts[0].stxPrivateKey;
 
-  while (keepRunning) {
+  const senderAddress = getAddressFromPrivateKey(SENDER_KEY, "mainnet");
+
+  console.log(`🌾 Starting SyncsHC farming script for address: ${senderAddress}`);
+
+  let currentNonce = await getCurrentNonce(senderAddress);
+  console.log(`🚀 Starting with nonce: ${currentNonce}`);
+
+  // Define the list of smart contract functions to randomly/sequentially interact with.
+  // We include every public function found in the SyncsHC contracts.
+  const actions = [
+    // --- piggy-bank-factory ---
+    {
+      contractName: 'piggy-bank-factory',
+      functionName: 'register-piggy-bank',
+      functionArgs: [Cl.contractPrincipal(deployerAddress, 'sysnc')]
+    },
+    {
+      contractName: 'piggy-bank-factory',
+      functionName: 'unregister-piggy-bank',
+      functionArgs: [Cl.contractPrincipal(deployerAddress, 'sysnc')]
+    },
+
+    // --- piggy-bank ---
+    {
+      contractName: 'piggy-bank',
+      functionName: 'deposit-stx',
+      functionArgs: [Cl.uint(1000000)] // 1 STX
+    },
+    {
+      contractName: 'piggy-bank',
+      functionName: 'set-lock-duration',
+      functionArgs: [Cl.uint(144)] // ~1 day (144 blocks)
+    },
+    {
+      contractName: 'piggy-bank',
+      functionName: 'withdraw',
+      functionArgs: [Cl.uint(500000)] 
+    },
+    {
+      contractName: 'piggy-bank',
+      functionName: 'deposit-token',
+      functionArgs: [Cl.uint(1000), Cl.contractPrincipal(deployerAddress, 'sysnc')]
+    },
+
+    // --- token-manager ---
+    {
+      contractName: 'token-manager',
+      functionName: 'add-supported-token',
+      functionArgs: [Cl.contractPrincipal(deployerAddress, 'sysnc')]
+    },
+    {
+      contractName: 'token-manager',
+      functionName: 'remove-supported-token',
+      functionArgs: [Cl.contractPrincipal(deployerAddress, 'sysnc')]
+    },
+    {
+      contractName: 'token-manager',
+      functionName: 'transfer-ownership',
+      functionArgs: [Cl.standardPrincipal(senderAddress)]
+    },
+
+  ];
+
+  let actionIndex = 0;
+
+  console.log("Press Ctrl+C to stop the terminal and end the looping... \n");
+
+  while (true) {
+    const action = actions[actionIndex % actions.length];
+    
+    console.log(`\n⏳ Crafting Tx (Nonce: ${currentNonce}): ${deployerAddress}.${action.contractName} -> ${action.functionName}`);
+    
     try {
-
-
-      // Pick random contract and function
-      const contract = contracts[Math.floor(Math.random() * contracts.length)];
-      const func = contract.functions[Math.floor(Math.random() * contract.functions.length)];
-
-      console.log(`\n[TX #${txCount + 1}] Target: ${contract.name} -> ${func.name} (Nonce: ${currentNonce})`);
-
-      const fee = BigInt(2500); // 0.0025 STX fee
-
       const txOptions = {
-        contractAddress: contract.address,
-        contractName: contract.name,
-        functionName: func.name,
-        functionArgs: func.getArgs(senderAddress),
-        senderKey: privateKey,
-        fee: fee,
-        nonce: currentNonce,
-        network: network,
+        contractAddress: deployerAddress,
+        contractName: action.contractName,
+        functionName: action.functionName,
+        functionArgs: action.functionArgs,
+        senderKey: SENDER_KEY,
+        validateWithAbi: false,
+        network,
+        postConditionMode: PostConditionMode.Allow, // Allows changing any state
         anchorMode: AnchorMode.Any,
-        postConditionMode: PostConditionMode.Allow,
+        nonce: BigInt(currentNonce),
+        fee: 10000n // 0.01 STX transaction fee.
       };
 
+      // 1. Make the contract call transaction
       const transaction = await makeContractCall(txOptions);
+      
+      // 2. Broadcast the transaction
       const broadcastResponse = await broadcastTransaction({ transaction, network });
 
-      if ("error" in broadcastResponse) {
-        console.error("❌ Broadcast Error:", broadcastResponse.error);
-        if ("reason" in broadcastResponse) {
-          console.error("   Reason:", broadcastResponse.reason);
-          // If nonce is bad, refresh it
-          const reason = broadcastResponse.reason as any;
-          if (reason === "BadNonce" || reason === "ConflictingNonceInMempool") {
-            console.log(`🔄 Nonce conflict/bad: ${currentNonce}. Incrementing to try next...`);
-            currentNonce++; 
-          }
-        }
-
+      if ('error' in broadcastResponse) {
+        console.error(`❌ Broadcast failed: ${broadcastResponse.reason} - ${broadcastResponse.error}`);
+        // If nonce error or other error, delay a bit and refetch nonce
+        console.log("Retrying in 10 seconds...");
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+        currentNonce = await getCurrentNonce(senderAddress); 
       } else {
-        console.log(`✅ Success! TXID: 0x${broadcastResponse.txid}`);
-        console.log(`🔗 Explorer: https://explorer.hiro.so/txid/0x${broadcastResponse.txid}?chain=${NETWORK_NAME}`);
-        txCount++;
-        currentNonce++;
+        console.log(`✅ Tx published! TxID: ${broadcastResponse.txid}`);
+        // Locally increment nonce for the next immediate transaction without waiting for block confirmation
+        currentNonce++; 
       }
-
-      // 10-second delay to stay within Mempool chaining limits and avoid API rate limits
-      await sleep(10000);
-
-    } catch (error: any) {
-      console.error("⚠️ Unexpected Error:", error.message);
-      // If we get an error, wait longer before retrying to let the API/Mempool cool down
-      // We DO NOT reset currentNonce here anymore. We trust our count.
-      await sleep(5000);
+    } catch (error) {
+      console.error(`❌ Error creating/broadcasting transaction:`, error);
+      // Wait a bit before next attempt on error
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
 
-
+    actionIndex++;
+    
+    // Configurable delay (e.g. 5000 ms) before the next tx
+    await new Promise((resolve) => setTimeout(resolve, 5000));
   }
-
-  console.log("-----------------------------------------");
-  console.log(`🏁 Summary: Sent ${txCount} transactions.`);
 }
 
-spamFarm();
+async function getCurrentNonce(senderAddress: string) {
+  try {
+    const url = `${network.client.baseUrl}/v2/accounts/${senderAddress}?proof=0`;
+    const res = await fetch(url);
+    const data = (await res.json()) as { nonce: number };
+    return data.nonce;
+  } catch (error) {
+    console.error("Failed to fetch nonce, defaulting to 0", error);
+    return 0;
+  }
+}
+
+main().catch(console.error);
