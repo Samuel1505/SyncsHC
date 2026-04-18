@@ -12,54 +12,60 @@ export async function connectStacksWallet({
   if (typeof window === "undefined") return;
 
   try {
-    const { showConnect, AppConfig, UserSession } = await import(
-      "@stacks/connect"
-    );
-
-    const appConfig = new AppConfig(["store_write", "publish_data"]);
-    const userSession = new UserSession({ appConfig });
-
-    showConnect({
-      appDetails: {
-        name: "SyncsHC",
-        icon: `${window.location.origin}/favicon.ico`,
-      },
-      userSession,
-      onFinish: () => {
-        try {
-          const userData = userSession.loadUserData();
-          const address =
-            userData?.profile?.stxAddress?.mainnet ||
-            userData?.profile?.stxAddress?.testnet;
-          if (address) {
-            onSuccess(address);
-          } else {
-            onCancel();
-          }
-        } catch {
-          onCancel();
-        }
-      },
-      onCancel,
-    });
+    const { connect } = await import("@stacks/connect");
+    
+    // This will trigger the wallet popup
+    const response = await connect();
+    
+    if (response && response.addresses && response.addresses.length > 0) {
+      // Index 2 is often the Stacks address in some wallets, 
+      // but let's be safe and look for the one that looks like a Stacks address 
+      // or just use the one at the requested index if specified.
+      // Based on the user's snippet, they want index 2.
+      const address = response.addresses[2]?.address || response.addresses[0]?.address;
+      
+      if (address) {
+        onSuccess(address);
+      } else {
+        onCancel();
+      }
+    } else {
+      onCancel();
+    }
   } catch (err) {
-    console.warn("Wallet connection via @stacks/connect failed:", err);
-    // Demo mode fallback
-    onSuccess("SP2JXKMSH007NPYAQHKJPQMAQYAD90NQGTVJVQ02");
+    console.error("Wallet connection failed:", err);
+    onCancel();
   }
 }
 
 export async function disconnectStacksWallet(): Promise<void> {
   try {
-    const { AppConfig, UserSession } = await import("@stacks/connect");
-    const appConfig = new AppConfig(["store_write", "publish_data"]);
-    const userSession = new UserSession({ appConfig });
-    if (userSession.isUserSignedIn()) {
-      userSession.signUserOut("/");
-    }
-  } catch {
-    // ignore
+    const { disconnect } = await import("@stacks/connect");
+    disconnect();
+  } catch (err) {
+    console.error("Disconnect failed:", err);
   }
+}
+
+/**
+ * Fetches the BNS name for a given Stacks address.
+ * Uses the BNS V2 API (testnet by default as per requirement).
+ */
+export async function fetchBnsName(address: string): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://api.bnsv2.com/testnet/names/address/${address}/valid`
+    );
+    if (!response.ok) return null;
+    
+    const data = await response.json();
+    if (data && data.names && data.names.length > 0) {
+      return data.names[0].full_name;
+    }
+  } catch (err) {
+    console.warn("Failed to fetch BNS name:", err);
+  }
+  return null;
 }
 
 export const MAINNET_CONTRACT = "SP2JXKMSH007NPYAQHKJPQMAQYAD90NQGTVJVQ02";
