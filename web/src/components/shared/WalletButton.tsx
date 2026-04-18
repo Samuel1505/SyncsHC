@@ -6,7 +6,7 @@ import { useWalletStore } from "@/store/useWalletStore";
 import { truncateAddress } from "@/lib/utils";
 
 export default function WalletButton() {
-  const { address, isConnecting, connect, disconnect } = useWalletStore();
+  const { address, bnsName, isConnecting, connect, disconnect } = useWalletStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -26,7 +26,7 @@ export default function WalletButton() {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
           </span>
           <span className="text-sm font-medium text-accent">
-            {truncateAddress(address)}
+            {bnsName || truncateAddress(address)}
           </span>
           <ChevronDown size={14} className="text-accent/60" />
         </div>
