@@ -19,7 +19,8 @@
     "@stacks/keychain": "^4.3.8",
     "@stacks/network": "^7.3.1",
     "@stacks/transactions": "^7.2.0",
-    "@syncshc/sdk": "^0.1.0"
+    "@syncshc/sdk": "^0.1.0",
+    "flyraos-sdk": "^0.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",
