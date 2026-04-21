@@ -15,14 +15,15 @@
     "lint": "tsc"
   },
   "dependencies": {
-    "@stacks/transactions": "^7.2.0",
-    "@stacks/network": "^7.3.1",
+    "@stacks/common": "^7.0.0",
     "@stacks/keychain": "^4.3.8",
-    "@stacks/common": "^7.0.0"
+    "@stacks/network": "^7.3.1",
+    "@stacks/transactions": "^7.2.0",
+    "@syncshc/sdk": "^0.1.0"
   },
   "devDependencies": {
+    "@types/node": "^20.11.16",
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
-    "@types/node": "^20.11.16"
+    "typescript": "^5.3.3"
   }
 }
